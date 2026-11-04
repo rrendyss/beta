@@ -1,0 +1,82 @@
+# PRD — Mocci: SaaS Overlay Builder for Streamers (Beta)
+
+## 1. Overview
+
+Mocci is a SaaS platform that lets streamers design **interactive game
+overlays** with a **drag-and-drop editor**, then add them to OBS / TikTok
+Live Studio via a browser-source URL. TikTok Live events (gifts, comments,
+follows) trigger real-time reactions in the overlay: games, gift alerts,
+leaderboards, and counters.
+
+Beta scope: SaaS foundation (auth, dashboard) + drag-and-drop **layout
+editor** (widget positioning) + real-time overlay runtime. Game
+customization (gift-mapping UI) is Phase 2.
+
+Reference design: docs/superpowers/specs/2026-11-04-mocci-overlay-saas-design.md
+
+## 2. Problem Statement
+
+Streamers want interactive overlay games (gift-triggered) but existing tools
+require manual setup, coding, or rigid templates. A visual drag-and-drop
+builder with real-time TikTok event integration removes that friction.
+
+## 3. Target User
+
+- Live streamers on TikTok Live (later Twitch/YouTube) who use OBS or
+  TikTok Live Studio
+- Non-technical creators who need a visual editor, not code
+
+## 4. Core Features (Beta)
+
+### 4.1 Authentication & Dashboard
+- Email + password registration and login (secure sessions)
+- Dashboard: list of overlays, connection status, create/new overlay
+
+### 4.2 Drag-and-Drop Overlay Editor
+- 1920x1080 canvas with zoom/pan, grid, and snapping
+- Widget palette (left), inspector panel (right), layer list (bottom)
+- Drag to move, handles to resize/rotate, multi-select basics
+- Undo/redo (command pattern), debounced autosave
+- Scene persisted as validated JSON (Zod): canvas size + ordered layers
+  with x, y, width, height, rotation, opacity, zIndex, per-widget config
+
+### 4.3 Widgets (6 types, shared React components used by editor AND runtime)
+1. Game Canvas — embeds a game renderer from the connector service
+2. Gift Alert — animated alert when a gift arrives (text, duration, sound)
+3. Chat Box — styled live comments
+4. Leaderboard — top gifters computed from events
+5. Goal/Counter — progress bar toward a target (e.g., total gifts)
+6. Text & Image — static elements (scene types: `text`, `image`)
+
+### 4.4 Overlay Runtime (Browser Source)
+- Public URL /overlay/[token] renders the saved scene full-screen
+- Receives TikTok events in real time over WebSocket (socket.io)
+- Only reacts to events relevant to widgets present in the scene
+
+### 4.5 TikTok Connection
+- Streamer links a TikTok username; connector service joins the Live
+- Connector normalizes events to {type, user, amount, data} and publishes
+  via Redis pub/sub to the platform's WebSocket hub
+- Evolves the existing tiktok-overlay-connector prototype; replaces
+  canvas-image polling with WebSocket delivery
+
+### 4.6 REST API
+- Consistent, documented endpoints for auth, overlays CRUD, connections
+- Proper HTTP status codes and error handling
+
+## 5. Non-Goals (Beta)
+
+- Billing/subscription, template marketplace
+- Twitch/YouTube support (TikTok first)
+- Gift-mapping UI (Phase 2), real-time multi-user collaboration
+- Mobile apps
+
+## 6. Success Criteria
+
+- A new user can register, create an overlay, drag widgets, save, and open
+  the browser-source URL showing the same layout (WYSIWYG parity)
+- A simulated gift event appears in Gift Alert, updates Leaderboard and
+  Goal widgets within ~1s over WebSocket
+- Main flows have no critical errors: register → login → edit → save →
+  overlay renders → logout
+- Primary API endpoints respond < 500ms under normal load

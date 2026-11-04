@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment & secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+
+# Build & artifacts
+dist/
+build/
+out/
+target/
+.next/
+*.pyc
+__pycache__/
+
+# Logs & cache
+*.log
+logs/
+.cache/
+
+# Coverage
+coverage/
+.nyc_output/
+.pytest_cache/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp

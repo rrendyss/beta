@@ -1,0 +1,16 @@
+{
+  "name": "mocci",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.29.1",
+  "scripts": {
+    "dev:platform": "pnpm --filter platform dev",
+    "dev:connector": "pnpm --filter connector dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.0"
+  }
+}

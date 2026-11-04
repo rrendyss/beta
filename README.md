@@ -1,25 +1,33 @@
-# Mocci — Beta
+# Mocci (Beta)
 
-> TODO: tambahkan deskripsi singkat proyek Mocci di sini.
+SaaS overlay builder untuk streamer — desain game overlay interaktif dengan
+drag-and-drop editor, pasang di OBS/TikTok Live Studio via browser source.
 
-## Status
+- Design spec: `docs/superpowers/specs/2026-11-04-mocci-overlay-saas-design.md`
+- PRD: `.taskmaster/docs/prd.txt`
+- Tasks: `task-master list` (10 task beta)
 
-Proyek masih dalam tahap awal. Struktur aplikasi akan ditambahkan secara bertahap.
+## Struktur Monorepo (pnpm workspaces)
 
-## Getting Started
+```
+apps/
+  platform/    Next.js 15+ (App Router) — auth, dashboard, editor, overlay runtime, WS hub
+  connector/   Node service — koneksi TikTok Live → Redis pub/sub
+packages/
+  shared/      Zod schemas & tipe bersama (scene JSON, widget)
+```
 
-_Akan diperbarui setelah stack aplikasi ditetapkan._
+## Menjalankan
 
-## Struktur Proyek
-
-_Akan ditambahkan._
+```bash
+pnpm install
+pnpm dev:platform    # http://localhost:3000
+pnpm dev:connector   # http://localhost:4001
+pnpm build           # build semua workspace
+```
 
 ## Kontribusi
 
-1. Buat branch baru dari `main`
-2. Lakukan perubahan dan commit
-3. Buat Pull Request ke `main`
-
-## Lisensi
-
-_Akan ditentukan._
+1. Buat branch kerja baru dari `main`
+2. Commit perubahan setahap demi setahap
+3. Push branch & buka Pull Request bila bekerja bersama

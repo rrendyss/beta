@@ -2,105 +2,148 @@
   "master": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Scaffold monorepo & tooling",
         "description": "Set up the monorepo structure with apps/platform (Next.js 15), apps/connector (Node/TypeScript), and packages/shared, plus base tooling.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "details": "Use pnpm workspaces. apps/platform: Next.js 15 App Router + TypeScript + Tailwind CSS + shadcn/ui initialized, ESLint + Prettier configured. apps/connector: minimal Node + TypeScript service skeleton with tsx for dev. packages/shared: TypeScript package for Zod schemas and shared types consumed by both apps. Add root scripts (dev, build, lint, test) and a README describing the layout. Do not implement features yet.",
-        "testStrategy": "pnpm install and pnpm build succeed for all workspaces; dev servers start without errors; lint passes on the scaffold."
+        "testStrategy": "pnpm install and pnpm build succeed for all workspaces; dev servers start without errors; lint passes on the scaffold.",
+        "updatedAt": "2026-11-04T09:04:37.743Z",
+        "subtasks": []
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Database schema & Prisma setup",
         "description": "Define the Postgres schema via Prisma: users, overlays, connections, events, and run initial migrations.",
         "status": "pending",
-        "dependencies": [1],
+        "dependencies": [
+          "1"
+        ],
         "priority": "high",
         "details": "Prisma schema: users (id, email unique, passwordHash, name, timestamps); overlays (id, userId FK, name, sceneJson jsonb, publicToken unique indexed, timestamps); connections (id, userId FK, platform enum default 'tiktok', username, status enum: disconnected/connecting/live/error, timestamps); events (id, connectionId FK, type enum: gift/chat/follow, payload jsonb, createdAt indexed). Add Prisma client generation in packages/shared or a dedicated db package. Provide docker-compose for local Postgres and Redis.",
-        "testStrategy": "prisma migrate dev runs clean; integration test creates a user + overlay + connection row and reads them back; unique constraints enforced (duplicate email/publicToken rejected)."
+        "testStrategy": "prisma migrate dev runs clean; integration test creates a user + overlay + connection row and reads them back; unique constraints enforced (duplicate email/publicToken rejected).",
+        "subtasks": []
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Authentication & dashboard shell",
         "description": "Email+password auth (register, login, logout) with secure sessions and a dashboard shell listing overlays.",
         "status": "pending",
-        "dependencies": [2],
+        "dependencies": [
+          "2"
+        ],
         "priority": "high",
         "details": "Use Auth.js (NextAuth) credentials provider or iron-session with bcrypt password hashing; httpOnly secure cookies. Pages: /register, /login, /dashboard. Dashboard shows the user's overlays (empty state + create button) and TikTok connection status placeholder. Middleware protects /dashboard and /editor routes. Input validation with Zod; proper error messages.",
-        "testStrategy": "Integration tests: register → login → access dashboard; wrong password rejected; unauthenticated access to /dashboard redirects to /login; logout clears session."
+        "testStrategy": "Integration tests: register → login → access dashboard; wrong password rejected; unauthenticated access to /dashboard redirects to /login; logout clears session.",
+        "subtasks": []
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Scene JSON schema & overlay CRUD API",
         "description": "Define the Zod scene schema in packages/shared and implement overlays CRUD REST API with ownership checks.",
         "status": "pending",
-        "dependencies": [2],
+        "dependencies": [
+          "2"
+        ],
         "priority": "high",
         "details": "Zod schema: { canvas: {width:1920, height:1080}, layers: [{id uuid, type: 'gift-alert'|'chat'|'leaderboard'|'game-canvas'|'goal'|'text'|'image', x, y, width, height, rotation, opacity 0-1, zIndex, config: discriminated per type}] }. API routes: POST /api/overlays, GET /api/overlays (list own), GET/PATCH/DELETE /api/overlays/:id, all authenticated and scoped to owner. Generate publicToken (crypto random, URL-safe) on create. Standardized error responses with correct HTTP codes.",
-        "testStrategy": "Unit tests for Zod schema (valid scene passes, bad type/coords rejected). Integration tests: CRUD lifecycle, 401 unauthenticated, 403 other user's overlay, PATCH persists sceneJson."
+        "testStrategy": "Unit tests for Zod schema (valid scene passes, bad type/coords rejected). Integration tests: CRUD lifecycle, 401 unauthenticated, 403 other user's overlay, PATCH persists sceneJson.",
+        "subtasks": []
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Shared widget components (renderer library)",
         "description": "Build the 6 React widget components that render from scene JSON config, used identically by the editor and the overlay runtime.",
         "status": "pending",
-        "dependencies": [1],
+        "dependencies": [
+          "1"
+        ],
         "priority": "high",
         "details": "In packages/shared (or apps/platform components lib): WidgetRenderer switch by layer.type. Widgets: GiftAlert (animated alert, config: text template, duration, sound), ChatBox (styled message list, subscribes to event feed via props/context), Leaderboard (top gifters list from event feed), GoalCounter (progress bar with target), Text (styled text), Image (src, fit). GameCanvas renders an iframe/URL placeholder for connector game renderers. Each widget is pure/presentational: receives config + event stream via a React context (EventFeedProvider) so the editor can show static/sample data and the runtime real data. Deterministic sample event generator for previews.",
-        "testStrategy": "Storybook-style render tests or React Testing Library: each widget renders from a sample scene config; GiftAlert animates on simulated gift event; Leaderboard orders by amount."
+        "testStrategy": "Storybook-style render tests or React Testing Library: each widget renders from a sample scene config; GiftAlert animates on simulated gift event; Leaderboard orders by amount.",
+        "subtasks": []
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Drag-and-drop overlay editor",
         "description": "The flagship editor: 1920x1080 canvas, widget palette, inspector, layer list, drag/resize/rotate, undo/redo, autosave.",
         "status": "pending",
-        "dependencies": [4, 5],
+        "dependencies": [
+          "4",
+          "5"
+        ],
         "priority": "high",
         "details": "Route /editor/[overlayId]. Layout: left palette (6 widget types, drag onto canvas), center canvas with zoom/pan (fit-to-screen default), right inspector (position/size/rotation/opacity + per-widget config forms), bottom layer list (zIndex order, visibility, lock, select). Use dnd-kit for palette→canvas drag and react-rnd for move/resize/rotate on selected layers. Grid + snapping (8px). Undo/redo via command pattern (serialize inverse ops). Autosave debounced 1s via PATCH; save status indicator. Multi-select basics (shift-click, group move). Widgets render via shared WidgetRenderer at canvas scale.",
-        "testStrategy": "Unit tests for undo/redo reducer. E2E (Playwright): create overlay → drag Text widget onto canvas → move/resize → save → reload page → layout persists identically."
+        "testStrategy": "Unit tests for undo/redo reducer. E2E (Playwright): create overlay → drag Text widget onto canvas → move/resize → save → reload page → layout persists identically.",
+        "subtasks": []
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Overlay runtime + WebSocket hub",
         "description": "Public /overlay/[token] browser-source page rendering the scene live, with socket.io WebSocket hub on a custom Next.js server.",
         "status": "pending",
-        "dependencies": [4, 5],
+        "dependencies": [
+          "4",
+          "5"
+        ],
         "priority": "high",
         "details": "Custom server.ts wrapping Next.js with socket.io. /overlay/[token] (no auth, token from overlay.publicToken) renders the scene full-screen at native 1920x1080 with WidgetRenderer — same components as editor (WYSIWYG parity). Client joins room `overlay:{overlayId}`; hub relays normalized events {type, user, amount, data} to the room. EventFeedProvider feeds widgets. Cache overlay scene per token with revalidation on save (hub notifies room 'scene-updated' so open overlays hot-reload).",
-        "testStrategy": "Integration: opening /overlay/[token] returns scene HTML; socket client in test joins room and receives a broadcast event; scene update triggers scene-updated message."
+        "testStrategy": "Integration: opening /overlay/[token] returns scene HTML; socket client in test joins room and receives a broadcast event; scene update triggers scene-updated message.",
+        "subtasks": []
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Connector service: TikTok Live → Redis pub/sub",
         "description": "Evolve tiktok-overlay-connector into apps/connector: join a streamer's TikTok Live, normalize events, publish to Redis.",
         "status": "pending",
-        "dependencies": [7],
+        "dependencies": [
+          "7"
+        ],
         "priority": "medium",
         "details": "Port the existing TikTok connection logic from the tiktok-overlay-connector prototype. API: POST /api/connections (username) → service joins Live, status transitions disconnected→connecting→live/error stored on connections row. Normalize events to {type: gift|chat|follow, user, amount, data} and publish to Redis channel `events:{overlayId}`. Include a simulation mode that emits scripted gift/chat events for development and tests (no real TikTok needed). Reconnect/backoff on stream end.",
-        "testStrategy": "Unit tests for event normalization (gift with coins → amount, chat → text). Integration: simulation mode publishes to Redis; hub receives and relays to overlay room."
+        "testStrategy": "Unit tests for event normalization (gift with coins → amount, chat → text). Integration: simulation mode publishes to Redis; hub receives and relays to overlay room.",
+        "subtasks": []
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Event-driven widget behavior",
         "description": "Wire Gift Alert, Leaderboard, and Goal/Counter widgets to live WebSocket events end-to-end.",
         "status": "pending",
-        "dependencies": [7, 8],
+        "dependencies": [
+          "7",
+          "8"
+        ],
         "priority": "medium",
         "details": "Gift Alert: queue animation per gift (respects duration, plays sound if configured). Leaderboard: aggregate gift amounts per user server-side or client-side over a rolling window, render top N. Goal/Counter: accumulate target metric (e.g., total coins) with progress bar. Chat Box: stream chat messages with max buffer. Ensure overlay filters events by widget types present in scene.",
-        "testStrategy": "E2E with simulation mode: emit gift events → alert animates, leaderboard reorders, goal progress increases; all within ~1s; widgets absent from scene do not react."
+        "testStrategy": "E2E with simulation mode: emit gift events → alert animates, leaderboard reorders, goal progress increases; all within ~1s; widgets absent from scene do not react.",
+        "subtasks": []
       },
       {
-        "id": 10,
+        "id": "10",
         "title": "Testing, polish & E2E flows",
         "description": "Complete test coverage for critical flows, error handling polish, and documentation.",
         "status": "pending",
-        "dependencies": [3, 6, 9],
+        "dependencies": [
+          "3",
+          "6",
+          "9"
+        ],
         "priority": "medium",
         "details": "Playwright E2E: register → login → create overlay → edit → save → open /overlay/[token] → simulate gift → verify alert/leaderboard/goal. API error handling audit (400/401/403/404). Lighthouse sanity check on editor and overlay pages. Update README with setup instructions (env vars, docker compose, run commands) and browser-source usage guide.",
-        "testStrategy": "CI script runs lint, unit, integration, and E2E suites green; README verified by fresh-clone setup walkthrough."
+        "testStrategy": "CI script runs lint, unit, integration, and E2E suites green; README verified by fresh-clone setup walkthrough.",
+        "subtasks": []
       }
-    ]
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-11-04T09:04:37.743Z",
+      "taskCount": 10,
+      "completedCount": 1,
+      "tags": [
+        "master"
+      ]
+    }
   }
 }

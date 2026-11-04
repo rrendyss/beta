@@ -31,27 +31,29 @@
         "id": "3",
         "title": "Authentication & dashboard shell",
         "description": "Email+password auth (register, login, logout) with secure sessions and a dashboard shell listing overlays.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "2"
         ],
         "priority": "high",
         "details": "Use Auth.js (NextAuth) credentials provider or iron-session with bcrypt password hashing; httpOnly secure cookies. Pages: /register, /login, /dashboard. Dashboard shows the user's overlays (empty state + create button) and TikTok connection status placeholder. Middleware protects /dashboard and /editor routes. Input validation with Zod; proper error messages.",
         "testStrategy": "Integration tests: register → login → access dashboard; wrong password rejected; unauthenticated access to /dashboard redirects to /login; logout clears session.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-04T09:25:43.367Z"
       },
       {
         "id": "4",
         "title": "Scene JSON schema & overlay CRUD API",
         "description": "Define the Zod scene schema in packages/shared and implement overlays CRUD REST API with ownership checks.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "2"
         ],
         "priority": "high",
         "details": "Zod schema: { canvas: {width:1920, height:1080}, layers: [{id uuid, type: 'gift-alert'|'chat'|'leaderboard'|'game-canvas'|'goal'|'text'|'image', x, y, width, height, rotation, opacity 0-1, zIndex, config: discriminated per type}] }. API routes: POST /api/overlays, GET /api/overlays (list own), GET/PATCH/DELETE /api/overlays/:id, all authenticated and scoped to owner. Generate publicToken (crypto random, URL-safe) on create. Standardized error responses with correct HTTP codes.",
         "testStrategy": "Unit tests for Zod schema (valid scene passes, bad type/coords rejected). Integration tests: CRUD lifecycle, 401 unauthenticated, 403 other user's overlay, PATCH persists sceneJson.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-04T09:25:45.107Z"
       },
       {
         "id": "5",
@@ -140,9 +142,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-04T09:23:07.895Z",
+      "lastModified": "2026-11-04T09:25:45.107Z",
       "taskCount": 10,
-      "completedCount": 2,
+      "completedCount": 4,
       "tags": [
         "master"
       ]

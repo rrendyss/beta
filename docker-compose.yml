@@ -1,0 +1,21 @@
+# Infrastruktur lokal untuk development (alternatif: brew services).
+# Jalankan: docker compose up -d
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: mocci
+      POSTGRES_PASSWORD: mocci
+      POSTGRES_DB: mocci
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

@@ -17,14 +17,15 @@
         "id": "2",
         "title": "Database schema & Prisma setup",
         "description": "Define the Postgres schema via Prisma: users, overlays, connections, events, and run initial migrations.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "1"
         ],
         "priority": "high",
         "details": "Prisma schema: users (id, email unique, passwordHash, name, timestamps); overlays (id, userId FK, name, sceneJson jsonb, publicToken unique indexed, timestamps); connections (id, userId FK, platform enum default 'tiktok', username, status enum: disconnected/connecting/live/error, timestamps); events (id, connectionId FK, type enum: gift/chat/follow, payload jsonb, createdAt indexed). Add Prisma client generation in packages/shared or a dedicated db package. Provide docker-compose for local Postgres and Redis.",
         "testStrategy": "prisma migrate dev runs clean; integration test creates a user + overlay + connection row and reads them back; unique constraints enforced (duplicate email/publicToken rejected).",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-04T09:23:05.996Z"
       },
       {
         "id": "3",
@@ -56,14 +57,15 @@
         "id": "5",
         "title": "Shared widget components (renderer library)",
         "description": "Build the 6 React widget components that render from scene JSON config, used identically by the editor and the overlay runtime.",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [
           "1"
         ],
         "priority": "high",
         "details": "In packages/shared (or apps/platform components lib): WidgetRenderer switch by layer.type. Widgets: GiftAlert (animated alert, config: text template, duration, sound), ChatBox (styled message list, subscribes to event feed via props/context), Leaderboard (top gifters list from event feed), GoalCounter (progress bar with target), Text (styled text), Image (src, fit). GameCanvas renders an iframe/URL placeholder for connector game renderers. Each widget is pure/presentational: receives config + event stream via a React context (EventFeedProvider) so the editor can show static/sample data and the runtime real data. Deterministic sample event generator for previews.",
         "testStrategy": "Storybook-style render tests or React Testing Library: each widget renders from a sample scene config; GiftAlert animates on simulated gift event; Leaderboard orders by amount.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-04T09:23:07.895Z"
       },
       {
         "id": "6",
@@ -138,9 +140,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-04T09:04:37.743Z",
+      "lastModified": "2026-11-04T09:23:07.895Z",
       "taskCount": 10,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "master"
       ]

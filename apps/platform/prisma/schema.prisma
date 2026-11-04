@@ -1,0 +1,63 @@
+// Mocci — database schema (task 2)
+// users → overlays (scene JSON) → connections → events
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  overlays    Overlay[]
+  connections Connection[]
+}
+
+model Overlay {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  sceneJson   Json
+  publicToken String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Connection {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform  String   @default("tiktok")
+  username  String
+  status    String   @default("disconnected") // disconnected | connecting | live | error
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Event[]
+
+  @@index([userId])
+  @@unique([platform, username])
+}
+
+model Event {
+  id           String     @id @default(cuid())
+  connectionId String
+  connection   Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  type         String // gift | chat | follow
+  payload      Json
+  createdAt    DateTime   @default(now())
+
+  @@index([connectionId, createdAt])
+}

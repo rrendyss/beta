@@ -13,9 +13,13 @@
     "test": "echo \"no tests yet\" && exit 0"
   },
   "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "typescript": "^5"
   }
 }

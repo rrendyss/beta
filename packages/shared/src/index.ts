@@ -1,4 +1,9 @@
-// @mocci/shared — schemas and types shared between platform and connector.
-// Scene JSON schema (Zod) lands in task 4; widget types in task 5.
+// @mocci/shared — schemas & tipe bersama antara platform dan connector.
 
 export const APP_NAME = "Mocci";
+
+export * from "./scene";
+export * from "./events";
+export * from "./widgets/config";
+export * from "./widgets/EventFeedContext";
+export * from "./widgets/WidgetRenderer";

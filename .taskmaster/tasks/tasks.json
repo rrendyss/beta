@@ -103,14 +103,15 @@
         "id": "8",
         "title": "Connector service: TikTok Live → Redis pub/sub",
         "description": "Evolve tiktok-overlay-connector into apps/connector: join a streamer's TikTok Live, normalize events, publish to Redis.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "7"
         ],
         "priority": "medium",
         "details": "Port the existing TikTok connection logic from the tiktok-overlay-connector prototype. API: POST /api/connections (username) → service joins Live, status transitions disconnected→connecting→live/error stored on connections row. Normalize events to {type: gift|chat|follow, user, amount, data} and publish to Redis channel `events:{overlayId}`. Include a simulation mode that emits scripted gift/chat events for development and tests (no real TikTok needed). Reconnect/backoff on stream end.",
         "testStrategy": "Unit tests for event normalization (gift with coins → amount, chat → text). Integration: simulation mode publishes to Redis; hub receives and relays to overlay room.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-05T04:54:37.504Z"
       },
       {
         "id": "9",
@@ -144,9 +145,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-05T04:49:18.497Z",
+      "lastModified": "2026-11-05T04:54:37.505Z",
       "taskCount": 10,
-      "completedCount": 6,
+      "completedCount": 7,
       "tags": [
         "master"
       ]

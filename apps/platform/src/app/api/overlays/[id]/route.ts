@@ -1,6 +1,7 @@
 import type { Scene } from "@mocci/shared";
 import { apiError, parseSceneOr400, readJson } from "@/lib/api";
 import { prisma } from "@/lib/db";
+import { redisPub } from "@/lib/redis";
 import { getSession } from "@/lib/session";
 
 type Params = { params: Promise<{ id: string }> };
@@ -50,6 +51,15 @@ export async function PATCH(req: Request, { params }: Params) {
   }
 
   const overlay = await prisma.overlay.update({ where: { id }, data });
+
+  // Beri tahu overlay runtime yang terbuka agar scene hot-reload.
+  if (data.sceneJson) {
+    await redisPub.publish(
+      "mocci:scene-updates",
+      JSON.stringify({ overlayId: id, scene: data.sceneJson }),
+    );
+  }
+
   return Response.json({ overlay });
 }
 

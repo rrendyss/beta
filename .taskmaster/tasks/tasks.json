@@ -88,7 +88,7 @@
         "id": "7",
         "title": "Overlay runtime + WebSocket hub",
         "description": "Public /overlay/[token] browser-source page rendering the scene live, with socket.io WebSocket hub on a custom Next.js server.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "4",
           "5"
@@ -96,7 +96,8 @@
         "priority": "high",
         "details": "Custom server.ts wrapping Next.js with socket.io. /overlay/[token] (no auth, token from overlay.publicToken) renders the scene full-screen at native 1920x1080 with WidgetRenderer — same components as editor (WYSIWYG parity). Client joins room `overlay:{overlayId}`; hub relays normalized events {type, user, amount, data} to the room. EventFeedProvider feeds widgets. Cache overlay scene per token with revalidation on save (hub notifies room 'scene-updated' so open overlays hot-reload).",
         "testStrategy": "Integration: opening /overlay/[token] returns scene HTML; socket client in test joins room and receives a broadcast event; scene update triggers scene-updated message.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-05T04:49:18.497Z"
       },
       {
         "id": "8",
@@ -143,9 +144,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-05T04:46:49.981Z",
+      "lastModified": "2026-11-05T04:49:18.497Z",
       "taskCount": 10,
-      "completedCount": 5,
+      "completedCount": 6,
       "tags": [
         "master"
       ]

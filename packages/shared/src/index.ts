@@ -7,3 +7,4 @@ export * from "./events";
 export * from "./widgets/config";
 export * from "./widgets/EventFeedContext";
 export * from "./widgets/WidgetRenderer";
+export * from "./widgets/SceneRenderer";

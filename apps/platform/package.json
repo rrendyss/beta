@@ -3,13 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "next": "16.4.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
     "@mocci/shared": "workspace:*",
     "@prisma/client": "^6.16.0",
     "bcryptjs": "^3.0.2",
-    "iron-session": "^8.0.4"
+    "ioredis": "^5.11.1",
+    "iron-session": "^8.0.4",
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "socket.io": "^4.8.4",
+    "socket.io-client": "^4.8.4"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -25,7 +28,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node --env-file=.env server.mjs",
     "lint": "eslint",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

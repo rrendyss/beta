@@ -1,33 +1,141 @@
-# Mocci (Beta)
+# Mocci
 
-SaaS overlay builder untuk streamer — desain game overlay interaktif dengan
-drag-and-drop editor, pasang di OBS/TikTok Live Studio via browser source.
+**Modern SaaS overlay builder for streamers** — design interactive game overlays with drag & drop, connect your TikTok LIVE, and go on air in minutes.
 
-- Design spec: `docs/superpowers/specs/2026-11-04-mocci-overlay-saas-design.md`
-- PRD: `.taskmaster/docs/prd.txt`
-- Tasks: `task-master list` (10 task beta)
+![status](https://img.shields.io/badge/status-beta-violet) ![platform](https://img.shields.io/badge/platform-TikTok%20Live-black)
 
-## Struktur Monorepo (pnpm workspaces)
+## What it does
+
+- **Visual editor** — drag widgets (gift alerts, chat box, leaderboard, goal counter, text, image, game canvas) onto a 1920×1080 canvas, style them in the inspector, undo/redo, autosave.
+- **Overlay runtime** — every overlay gets a public URL (`/overlay/<token>`) designed for an OBS browser source: transparent background, viewport-scaled, live-updating.
+- **Live events** — a connector service joins a TikTok LIVE (or runs in simulation mode), normalizes gift/chat/follow events and fans them out through Redis → WebSocket hub → open overlays in real time.
+- **Event-driven widgets** — gift alert queue with animation & sound, rolling-window leaderboard, goal progress bar, buffered chat — all react within ~1s of an event.
+
+## Architecture
 
 ```
-apps/
-  platform/    Next.js 15+ (App Router) — auth, dashboard, editor, overlay runtime, WS hub
-  connector/   Node service — koneksi TikTok Live → Redis pub/sub
-packages/
-  shared/      Zod schemas & tipe bersama (scene JSON, widget)
+┌─────────────────────────────┐        ┌──────────────────────────┐
+│  apps/platform (Next.js 16) │        │  apps/connector (Node)   │
+│  ├─ auth (iron-session)     │        │  ├─ TikTok LIVE (ttlc)   │
+│  ├─ dashboard + editor      │        │  ├─ simulation mode      │
+│  ├─ REST API (overlays)     │        │  └─ normalize events     │
+│  ├─ /overlay/[token] runtime│        └───────────┬──────────────┘
+│  └─ socket.io hub           │                    │ publish
+│       ▲  join by token      │                    ▼
+│       └──────── socket.io ──┼── Redis pub/sub ◄──┘
+└─────────────────────────────┘   (mocci:events,
+                                    mocci:scene-updates)
+        packages/shared — scene schema (Zod), widget components
+                         (shared by editor & runtime = WYSIWYG)
 ```
 
-## Menjalankan
+**Stack:** Next.js 16 (App Router, Turbopack) · React 19 · Tailwind 4 · Prisma 6 + PostgreSQL 16 · Redis pub/sub · socket.io 4 · TypeScript (pnpm workspaces) · Vitest · Playwright (system Chrome).
+
+## Getting started
+
+### Prerequisites
+
+- Node.js ≥ 24, pnpm 10
+- PostgreSQL 16 and Redis 7 running locally (e.g. `brew install postgresql@16 redis && brew services start postgresql@16 redis`)
+- A database named `mocci` (or adjust the URL below)
+
+### Setup
 
 ```bash
 pnpm install
-pnpm dev:platform    # http://localhost:3000
-pnpm dev:connector   # http://localhost:4001
-pnpm build           # build semua workspace
+
+# 1. Configure environment
+cp .env.example apps/platform/.env   # then edit values
+cp .env.example apps/connector/.env  # connector needs DATABASE_URL + REDIS_URL only
 ```
 
-## Kontribusi
+`apps/platform/.env`:
 
-1. Buat branch kerja baru dari `main`
-2. Commit perubahan setahap demi setahap
-3. Push branch & buka Pull Request bila bekerja bersama
+```env
+DATABASE_URL="postgresql://<user>@localhost:5432/mocci?schema=public"
+REDIS_URL="redis://localhost:6379"
+AUTH_SECRET="<openssl rand -base64 32>"   # min. 32 characters
+```
+
+```bash
+# 2. Create the schema
+pnpm --filter platform db:migrate
+
+# 3. Build everything
+pnpm build
+```
+
+### Run
+
+```bash
+# Platform (Next.js + WebSocket hub on one port)
+pnpm dev:platform        # dev — http://localhost:3000 (hub only in prod mode)
+pnpm --filter platform start   # prod — custom server with socket.io hub
+
+# Connector (TikTok → Redis)
+pnpm dev:connector       # http://localhost:4001
+```
+
+Then open http://localhost:3000 → register → create an overlay → build it in the editor.
+
+## Using it in OBS (browser source)
+
+1. In the editor, click **Copy URL Overlay**.
+2. In OBS: **Sources → + → Browser**.
+3. Paste the URL, set **Width 1920, Height 1080** (or your canvas size — the scene auto-scales).
+4. Leave **Custom CSS** empty — the background is already transparent.
+5. Events appear live; scene edits hot-reload without refreshing the source.
+
+## Connecting TikTok (or simulating)
+
+The connector exposes a small HTTP API (default `http://localhost:4001`):
+
+```bash
+# Start a simulated connection (scripted gift/chat events, no TikTok needed)
+curl -X POST http://localhost:4001/api/connections \
+  -H 'content-type: application/json' \
+  -d '{"overlayId":"<overlay-id>","username":"yourhandle","mode":"simulate"}'
+
+# Go live against a real TikTok username
+curl -X POST http://localhost:4001/api/connections \
+  -H 'content-type: application/json' \
+  -d '{"overlayId":"<overlay-id>","username":"yourhandle","mode":"live"}'
+
+# Status & disconnect
+curl http://localhost:4001/api/connections
+curl -X DELETE http://localhost:4001/api/connections/<connection-id>
+```
+
+Live mode uses `tiktok-live-connector` 2.4.0 with exponential-backoff reconnects (1s → 30s). Simulation mode emits weighted chat/gift/follow events every ~650ms — perfect for designing without a live stream.
+
+## Testing
+
+```bash
+pnpm test                      # unit tests (widget behavior + event normalization)
+pnpm build                     # typecheck all packages
+
+# Integration & E2E (need Postgres + Redis running, and a built platform)
+pnpm --filter platform start &                  # platform + hub on :3000
+pnpm --filter connector start &                 # connector on :4001
+
+node apps/platform/scripts/test-api-errors.mjs     # API error audit (400/401/403/404)
+node apps/platform/scripts/test-hub.mjs            # hub relay: ingest → socket room
+node apps/platform/scripts/test-connector.mjs      # connector → Redis → hub → room
+cd apps/platform && npx playwright test            # full UI flow in system Chrome
+```
+
+The Playwright E2E covers the complete streamer journey: **register → login → create overlay → add widgets → autosave → open public overlay → ingest gifts → verify alert, leaderboard order and goal progress**.
+
+## Project layout
+
+```
+apps/platform    Next.js app: auth, dashboard, editor, REST API, overlay runtime, socket.io hub
+apps/connector   TikTok LIVE connector: live + simulation modes, event normalization
+packages/shared  Zod scene schema, normalized event types, widget components (editor + runtime)
+docs/superpowers/specs/  Design spec
+.taskmaster/docs/        PRD & task breakdown (10 tasks) driving the build
+```
+
+## Status & roadmap
+
+Beta — TikTok Live first. Phase 2 candidates: gift-mapping UI (map gifts to game actions), connection management dashboard, more platforms (YouTube, Twitch), widget library expansion.

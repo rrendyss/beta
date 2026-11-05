@@ -34,34 +34,37 @@ export function EditorClient({ overlayId, name, publicToken, initialScene }: Edi
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<"saved" | "saving" | "error">("saved");
   const [snap, setSnap] = useState(true);
-  const [, bump] = useState(0); // memicu re-render untuk status tombol undo/redo
+  const [historyLen, setHistoryLen] = useState({ past: 0, future: 0 });
 
   // ── History (undo/redo) ────────────────────────────────────────────────────
   const past = useRef<Scene[]>([]);
   const future = useRef<Scene[]>([]);
+  const syncHistoryLen = useCallback(() => {
+    setHistoryLen({ past: past.current.length, future: future.current.length });
+  }, []);
 
   const pushHistory = useCallback(() => {
     past.current.push(sceneRef.current);
     if (past.current.length > 50) past.current.shift();
     future.current = [];
-    bump((t) => t + 1);
-  }, []);
+    syncHistoryLen();
+  }, [syncHistoryLen]);
 
   const undo = useCallback(() => {
     const prev = past.current.pop();
     if (!prev) return;
     future.current.push(sceneRef.current);
     setScene(prev);
-    bump((t) => t + 1);
-  }, [setScene]);
+    syncHistoryLen();
+  }, [setScene, syncHistoryLen]);
 
   const redo = useCallback(() => {
     const next = future.current.pop();
     if (!next) return;
     past.current.push(sceneRef.current);
     setScene(next);
-    bump((t) => t + 1);
-  }, [setScene]);
+    syncHistoryLen();
+  }, [setScene, syncHistoryLen]);
 
   // ── Mutasi layer ───────────────────────────────────────────────────────────
   const updateLayer = useCallback(
@@ -199,7 +202,7 @@ export function EditorClient({ overlayId, name, publicToken, initialScene }: Edi
         <div className="flex items-center gap-2 text-sm">
           <button
             onClick={undo}
-            disabled={past.current.length === 0}
+            disabled={historyLen.past === 0}
             className="rounded-lg border border-zinc-800 px-2.5 py-1.5 transition hover:border-zinc-600 disabled:opacity-30"
             title="Undo (Ctrl+Z)"
           >
@@ -207,7 +210,7 @@ export function EditorClient({ overlayId, name, publicToken, initialScene }: Edi
           </button>
           <button
             onClick={redo}
-            disabled={future.current.length === 0}
+            disabled={historyLen.future === 0}
             className="rounded-lg border border-zinc-800 px-2.5 py-1.5 transition hover:border-zinc-600 disabled:opacity-30"
             title="Redo (Ctrl+Shift+Z)"
           >

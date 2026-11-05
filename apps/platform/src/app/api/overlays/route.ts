@@ -23,7 +23,8 @@ export async function POST(req: Request) {
   if (!session.userId) return apiError(401, "Belum login");
 
   const body = await readJson<{ name?: string; scene?: unknown }>(req);
-  const name = body?.name?.trim() || "Overlay Baru";
+  if (!body) return apiError(400, "Body JSON tidak valid");
+  const name = body.name?.trim() || "Overlay Baru";
 
   let scene = emptyScene();
   if (body?.scene !== undefined) {

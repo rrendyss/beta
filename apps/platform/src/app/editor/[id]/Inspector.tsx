@@ -19,14 +19,12 @@ const labelCls = "mb-1 block text-xs font-medium text-zinc-400";
 function NumberField({
   label,
   value,
-  onLive,
   pushHistory,
   onChange,
   step = 1,
 }: {
   label: string;
   value: number;
-  onLive: InspectorProps["onLive"];
   pushHistory: () => void;
   onChange: (n: number) => void;
   step?: number;
@@ -45,9 +43,7 @@ function NumberField({
     </div>
   );
 }
-
-export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: InspectorProps) {
-  if (!layer) {
+export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: InspectorProps) {  if (!layer) {
     return (
       <aside className="w-72 shrink-0 overflow-y-auto border-l border-zinc-800 p-4">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Properti</h2>
@@ -95,35 +91,30 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
         <NumberField
           label="X"
           value={layer.x}
-          onLive={onLive}
           pushHistory={pushHistory}
           onChange={(n) => onLive(layer.id, { x: n })}
         />
         <NumberField
           label="Y"
           value={layer.y}
-          onLive={onLive}
           pushHistory={pushHistory}
           onChange={(n) => onLive(layer.id, { y: n })}
         />
         <NumberField
           label="Lebar"
           value={layer.width}
-          onLive={onLive}
           pushHistory={pushHistory}
           onChange={(n) => onLive(layer.id, { width: Math.max(40, n) })}
         />
         <NumberField
           label="Tinggi"
           value={layer.height}
-          onLive={onLive}
           pushHistory={pushHistory}
           onChange={(n) => onLive(layer.id, { height: Math.max(40, n) })}
         />
         <NumberField
           label="Rotasi (°)"
           value={layer.rotation}
-          onLive={onLive}
           pushHistory={pushHistory}
           onChange={(n) => onLive(layer.id, { rotation: n })}
         />
@@ -131,7 +122,6 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
           label="Opasitas (0–1)"
           value={layer.opacity}
           step={0.1}
-          onLive={onLive}
           pushHistory={pushHistory}
           onChange={(n) => onLive(layer.id, { opacity: Math.min(1, Math.max(0, n)) })}
         />
@@ -155,7 +145,6 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
             <NumberField
               label="Ukuran font"
               value={Number(cfg.fontSize ?? 32)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("fontSize", n)}
             />
@@ -207,7 +196,6 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
             <NumberField
               label="Durasi tampil (ms)"
               value={Number(cfg.durationMs ?? 4000)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("durationMs", n)}
             />
@@ -229,14 +217,12 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
             <NumberField
               label="Maks. pesan"
               value={Number(cfg.maxMessages ?? 20)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("maxMessages", n)}
             />
             <NumberField
               label="Ukuran font"
               value={Number(cfg.fontSize ?? 16)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("fontSize", n)}
             />
@@ -276,7 +262,6 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
             <NumberField
               label="Jumlah entri (top N)"
               value={Number(cfg.topN ?? 5)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("topN", n)}
             />
@@ -294,7 +279,6 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
             <NumberField
               label="Jendela (menit, 0 = sejak sesi)"
               value={Number(cfg.windowMinutes ?? 15)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("windowMinutes", Math.max(0, Math.round(n)))}
             />
@@ -315,7 +299,6 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
             <NumberField
               label="Target"
               value={Number(cfg.target ?? 1000)}
-              onLive={onLive}
               pushHistory={pushHistory}
               onChange={(n) => setCfg("target", n)}
             />

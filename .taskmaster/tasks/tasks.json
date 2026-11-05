@@ -132,7 +132,7 @@
         "id": "10",
         "title": "Testing, polish & E2E flows",
         "description": "Complete test coverage for critical flows, error handling polish, and documentation.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "3",
           "6",
@@ -141,14 +141,15 @@
         "priority": "medium",
         "details": "Playwright E2E: register → login → create overlay → edit → save → open /overlay/[token] → simulate gift → verify alert/leaderboard/goal. API error handling audit (400/401/403/404). Lighthouse sanity check on editor and overlay pages. Update README with setup instructions (env vars, docker compose, run commands) and browser-source usage guide.",
         "testStrategy": "CI script runs lint, unit, integration, and E2E suites green; README verified by fresh-clone setup walkthrough.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-05T05:03:04.131Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-05T04:57:16.147Z",
+      "lastModified": "2026-11-05T05:03:04.131Z",
       "taskCount": 10,
-      "completedCount": 8,
+      "completedCount": 9,
       "tags": [
         "master"
       ]

@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mocci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mocci?schema=public
+      REDIS_URL: redis://localhost:6379
+      AUTH_SECRET: ci-secret-mocci-0123456789abcdef0123456789abcdef
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Apply database schema
+        run: pnpm --filter platform exec prisma migrate deploy
+
+      - name: Build (typecheck + compile)
+        run: pnpm build
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Start platform & connector
+        run: |
+          pnpm --filter platform start &
+          pnpm --filter connector start &
+          npx wait-on tcp:3000 tcp:4001 -t 30000
+
+      - name: API error audit
+        run: node apps/platform/scripts/test-api-errors.mjs
+
+      - name: Hub relay integration
+        run: node apps/platform/scripts/test-hub.mjs
+
+      - name: Connector integration
+        run: node apps/platform/scripts/test-connector.mjs
+
+      - name: Playwright E2E (system Chrome)
+        run: npx playwright install --with-deps chrome && pnpm --filter platform exec playwright test

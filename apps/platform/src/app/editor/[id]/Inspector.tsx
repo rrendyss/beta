@@ -291,6 +291,13 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
                 <option value="gifts">Jumlah gift</option>
               </select>
             </div>
+            <NumberField
+              label="Jendela (menit, 0 = sejak sesi)"
+              value={Number(cfg.windowMinutes ?? 15)}
+              onLive={onLive}
+              pushHistory={pushHistory}
+              onChange={(n) => setCfg("windowMinutes", Math.max(0, Math.round(n)))}
+            />
           </>
         )}
 

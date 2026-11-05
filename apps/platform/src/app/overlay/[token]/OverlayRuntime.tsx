@@ -9,7 +9,7 @@ import {
 } from "@mocci/shared";
 import { io, type Socket } from "socket.io-client";
 
-const MAX_EVENTS = 100;
+const MAX_EVENTS = 500;
 
 interface OverlayRuntimeProps {
   overlayId: string;

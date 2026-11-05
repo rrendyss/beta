@@ -9,21 +9,28 @@ interface Entry {
   value: number;
 }
 
-/** Top gifters — agregasi gift events (koin atau jumlah gift). */
+/** Top gifters — agregasi gift dalam jendela waktu (rolling window). */
 export function Leaderboard({ config }: { config: LeaderboardConfig }) {
   const events = useEventFeed();
 
   const entries = useMemo<Entry[]>(() => {
+    // Jendela relatif terhadap event terbaru (bukan Date.now) agar
+    // deterministik saat SSR/PPR dan maknanya "N menit aktivitas terakhir".
+    const cutoffMs =
+      config.windowMinutes > 0 && events.length > 0
+        ? Date.parse(events[events.length - 1].createdAt) - config.windowMinutes * 60_000
+        : 0;
     const totals = new Map<string, Entry>();
     for (const e of events) {
       if (e.type !== "gift") continue;
+      if (cutoffMs > 0 && Date.parse(e.createdAt) < cutoffMs) continue;
       const value = config.metric === "coins" ? e.amount : (e.data?.giftCount ?? 1);
       const prev = totals.get(e.user) ?? { user: e.user, value: 0 };
       prev.value += value;
       totals.set(e.user, prev);
     }
     return [...totals.values()].sort((a, b) => b.value - a.value).slice(0, config.topN);
-  }, [events, config.metric, config.topN]);
+  }, [events, config.metric, config.topN, config.windowMinutes]);
 
   const medal = ["🥇", "🥈", "🥉"];
 

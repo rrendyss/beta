@@ -20,6 +20,8 @@ export const leaderboardConfigSchema = z.object({
   title: z.string().default("Top Gifters"),
   topN: z.number().int().min(1).max(50).default(5),
   metric: z.enum(["coins", "gifts"]).default("coins"),
+  /** Jendela agregasi menit (0 = sejak sesi dimulai). */
+  windowMinutes: z.number().int().min(0).max(1440).default(15),
 });
 
 export const goalConfigSchema = z.object({

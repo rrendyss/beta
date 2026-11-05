@@ -117,7 +117,7 @@
         "id": "9",
         "title": "Event-driven widget behavior",
         "description": "Wire Gift Alert, Leaderboard, and Goal/Counter widgets to live WebSocket events end-to-end.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "7",
           "8"
@@ -125,7 +125,8 @@
         "priority": "medium",
         "details": "Gift Alert: queue animation per gift (respects duration, plays sound if configured). Leaderboard: aggregate gift amounts per user server-side or client-side over a rolling window, render top N. Goal/Counter: accumulate target metric (e.g., total coins) with progress bar. Chat Box: stream chat messages with max buffer. Ensure overlay filters events by widget types present in scene.",
         "testStrategy": "E2E with simulation mode: emit gift events → alert animates, leaderboard reorders, goal progress increases; all within ~1s; widgets absent from scene do not react.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-05T04:57:16.147Z"
       },
       {
         "id": "10",
@@ -145,9 +146,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-05T04:54:37.505Z",
+      "lastModified": "2026-11-05T04:57:16.147Z",
       "taskCount": 10,
-      "completedCount": 7,
+      "completedCount": 8,
       "tags": [
         "master"
       ]

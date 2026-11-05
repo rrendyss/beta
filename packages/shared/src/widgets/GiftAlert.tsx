@@ -44,6 +44,22 @@ export function GiftAlert({ config }: { config: GiftAlertConfig }) {
     return () => clearTimeout(t);
   }, [queue, config.durationMs]);
 
+  // Sound per gift baru (jika dikonfigurasi). OBS mengizinkan autoplay;
+  // browser biasa bisa menolak — ditangkap diam-diam.
+  const soundRef = useRef<HTMLAudioElement | null>(null);
+  const soundUrl = config.soundUrl;
+  useEffect(() => {
+    if (!soundUrl || queue.length === 0) return;
+    try {
+      soundRef.current?.pause();
+      const audio = new Audio(soundUrl);
+      soundRef.current = audio;
+      void audio.play().catch(() => undefined);
+    } catch {
+      /* autoplay diblokir */
+    }
+  }, [queue.length, soundUrl]);
+
   const current = queue[0];
   if (!current) return null;
 

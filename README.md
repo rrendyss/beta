@@ -78,6 +78,8 @@ pnpm dev:connector       # http://localhost:4001
 
 Then open http://localhost:3000 → register → create an overlay → build it in the editor.
 
+**Behind a proxy** (e.g. an Orca worktree preview like `beta.orca.localhost:51069`): Server Actions need the browser `origin` to be allowed — `*.orca.*` is preconfigured in `next.config.ts`. For any other proxy set `SERVER_ACTIONS_ALLOWED_ORIGINS="host:port,..."` in the environment.
+
 ## Using it in OBS (browser source)
 
 1. In the editor, click **Copy URL Overlay**.

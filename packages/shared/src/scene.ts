@@ -39,12 +39,14 @@ export const textConfigSchema = z.object({
 });
 
 export const imageConfigSchema = z.object({
-  src: z.string().min(1),
+  /** Kosong = belum diatur; widget menampilkan placeholder. */
+  src: z.string().default(""),
   fit: z.enum(["contain", "cover"]).default("contain"),
 });
 
 export const gameCanvasConfigSchema = z.object({
-  url: z.string().min(1),
+  /** Kosong = belum diatur; widget menampilkan placeholder. */
+  url: z.string().default(""),
 });
 
 // ─── Layer & scene ────────────────────────────────────────────────────────────

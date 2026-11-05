@@ -68,9 +68,9 @@ pnpm build
 ### Run
 
 ```bash
-# Platform (Next.js + WebSocket hub on one port)
-pnpm dev:platform        # dev — http://localhost:3000 (hub only in prod mode)
-pnpm --filter platform start   # prod — custom server with socket.io hub
+# Platform (Next.js + WebSocket hub on one port — hub runs in dev too)
+pnpm dev:platform        # dev — http://localhost:3000
+pnpm --filter platform start   # prod — same custom server, production build
 
 # Connector (TikTok → Redis)
 pnpm dev:connector       # http://localhost:4001

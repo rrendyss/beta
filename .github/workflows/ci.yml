@@ -65,7 +65,7 @@ jobs:
 
       - name: Start platform & connector
         run: |
-          pnpm --filter platform start &
+          NODE_ENV=production pnpm --filter platform start &
           pnpm --filter connector start &
           npx wait-on tcp:3000 tcp:4001 -t 30000
 

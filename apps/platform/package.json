@@ -27,7 +27,7 @@
     "typescript": "^5"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --env-file-if-exists=.env server.mjs",
     "build": "next build",
     "start": "node --env-file-if-exists=.env server.mjs",
     "lint": "eslint",

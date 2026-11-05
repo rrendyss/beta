@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
-import { emptyScene, parseScene } from "@mocci/shared";
-import { apiError, readJson } from "@/lib/api";
+import { emptyScene } from "@mocci/shared";
+import { apiError, parseSceneOr400, readJson } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 
@@ -24,7 +24,13 @@ export async function POST(req: Request) {
 
   const body = await readJson<{ name?: string; scene?: unknown }>(req);
   const name = body?.name?.trim() || "Overlay Baru";
-  const scene = body?.scene ? parseScene(body.scene) : emptyScene();
+
+  let scene = emptyScene();
+  if (body?.scene !== undefined) {
+    const parsed = parseSceneOr400(body.scene);
+    if ("response" in parsed) return parsed.response;
+    scene = parsed.scene;
+  }
 
   const overlay = await prisma.overlay.create({
     data: {

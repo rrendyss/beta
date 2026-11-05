@@ -73,7 +73,7 @@
         "id": "6",
         "title": "Drag-and-drop overlay editor",
         "description": "The flagship editor: 1920x1080 canvas, widget palette, inspector, layer list, drag/resize/rotate, undo/redo, autosave.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "4",
           "5"
@@ -81,7 +81,8 @@
         "priority": "high",
         "details": "Route /editor/[overlayId]. Layout: left palette (6 widget types, drag onto canvas), center canvas with zoom/pan (fit-to-screen default), right inspector (position/size/rotation/opacity + per-widget config forms), bottom layer list (zIndex order, visibility, lock, select). Use dnd-kit for palette→canvas drag and react-rnd for move/resize/rotate on selected layers. Grid + snapping (8px). Undo/redo via command pattern (serialize inverse ops). Autosave debounced 1s via PATCH; save status indicator. Multi-select basics (shift-click, group move). Widgets render via shared WidgetRenderer at canvas scale.",
         "testStrategy": "Unit tests for undo/redo reducer. E2E (Playwright): create overlay → drag Text widget onto canvas → move/resize → save → reload page → layout persists identically.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-05T04:46:49.981Z"
       },
       {
         "id": "7",
@@ -142,9 +143,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-04T09:25:45.107Z",
+      "lastModified": "2026-11-05T04:46:49.981Z",
       "taskCount": 10,
-      "completedCount": 4,
+      "completedCount": 5,
       "tags": [
         "master"
       ]

@@ -79,6 +79,21 @@ export type Layer = z.infer<typeof layerSchema>;
 export type Scene = z.infer<typeof sceneSchema>;
 export type LayerType = Layer["type"];
 
+const configByType: Record<LayerType, z.ZodType> = {
+  "gift-alert": giftAlertConfigSchema,
+  chat: chatConfigSchema,
+  leaderboard: leaderboardConfigSchema,
+  goal: goalConfigSchema,
+  text: textConfigSchema,
+  image: imageConfigSchema,
+  "game-canvas": gameCanvasConfigSchema,
+};
+
+/** Config default untuk widget baru (memakai nilai .default() dari schema). */
+export function defaultLayerConfig(type: LayerType): Layer["config"] {
+  return configByType[type].parse({}) as Layer["config"];
+}
+
 export const WIDGET_LABELS: Record<LayerType, string> = {
   "gift-alert": "Gift Alert",
   chat: "Chat Box",

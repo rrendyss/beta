@@ -1,4 +1,5 @@
 import { getIronSession, type IronSession, type SessionOptions } from "iron-session";
+import { connection } from "next/server";
 import { cookies } from "next/headers";
 
 export interface SessionData {
@@ -17,6 +18,10 @@ export const sessionOptions: SessionOptions = {
 };
 
 export async function getSession(): Promise<IronSession<SessionData>> {
+  // Tandai render sebagai request-time sejak awal — query Prisma memakai
+  // Date.now() internal yang ditandai detektor prerender Next 16 jika
+  // dieksekusi sebelum ada akses dinamis eksplisit.
+  await connection();
   return getIronSession<SessionData>(await cookies(), sessionOptions);
 }
 

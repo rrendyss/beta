@@ -18,6 +18,10 @@ export interface NormalizedEvent {
 
 let counter = 0;
 
+// Timestamp dasar deterministik — sample events harus stabil saat SSR/PPR
+// (nilai `new Date()` langsung membuat prerender Next.js gagal).
+const BASE_MS = Date.parse("2026-01-01T00:00:00.000Z");
+
 /** Event tiruan untuk preview editor & testing (tanpa TikTok asli). */
 export function makeSampleEvent(type: EventType, overrides?: Partial<NormalizedEvent>): NormalizedEvent {
   counter += 1;
@@ -35,7 +39,7 @@ export function makeSampleEvent(type: EventType, overrides?: Partial<NormalizedE
         : type === "chat"
           ? { message: `Halo streamer! (${counter})` }
           : undefined,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(BASE_MS + counter * 1000).toISOString(),
     ...overrides,
   };
 }

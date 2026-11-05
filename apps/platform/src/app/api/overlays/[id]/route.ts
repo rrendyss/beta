@@ -1,5 +1,5 @@
-import { parseScene } from "@mocci/shared";
-import { apiError, readJson } from "@/lib/api";
+import type { Scene } from "@mocci/shared";
+import { apiError, parseSceneOr400, readJson } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 
@@ -37,13 +37,17 @@ export async function PATCH(req: Request, { params }: Params) {
     return apiError(400, "Tidak ada data untuk diupdate");
   }
 
-  const data: { name?: string; sceneJson?: ReturnType<typeof parseScene> } = {};
+  const data: { name?: string; sceneJson?: Scene } = {};
   if (body.name !== undefined) {
     const name = body.name.trim();
     if (!name) return apiError(400, "Nama tidak boleh kosong");
     data.name = name;
   }
-  if (body.scene !== undefined) data.sceneJson = parseScene(body.scene);
+  if (body.scene !== undefined) {
+    const parsed = parseSceneOr400(body.scene);
+    if ("response" in parsed) return parsed.response;
+    data.sceneJson = parsed.scene;
+  }
 
   const overlay = await prisma.overlay.update({ where: { id }, data });
   return Response.json({ overlay });

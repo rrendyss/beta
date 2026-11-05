@@ -5,7 +5,7 @@ import type { GiftAlertConfig } from "./config";
 import { useEventFeed } from "./EventFeedContext";
 
 interface ActiveAlert {
-  key: number;
+  key: string;
   text: string;
 }
 
@@ -26,8 +26,8 @@ export function GiftAlert({ config }: { config: GiftAlertConfig }) {
     fresh.forEach((e) => seenRef.current.add(e.id));
     setQueue((q) => [
       ...q,
-      ...fresh.map((e, i) => ({
-        key: Date.now() + i,
+      ...fresh.map((e) => ({
+        key: e.id,
         text: renderTemplate(config.textTemplate, {
           user: e.user,
           gift: e.data?.giftName ?? "Gift",

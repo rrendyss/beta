@@ -126,7 +126,7 @@ node apps/platform/scripts/demo-feed.mjs <publicToken> --fast               # in
 node apps/platform/scripts/demo-feed.mjs <publicToken> --url http://localhost:3000
 ```
 
-`<publicToken>` is the last segment of the overlay URL (or from **Copy URL Overlay** in the editor). The script prints each event as it sends and reports totals — 31 events, 76,501 coins.
+`<publicToken>` is the last segment of the overlay URL (or from **Copy URL Overlay** in the editor). The script prints each event as it sends and reports totals — 37 events, 76,501 coins (all five event types: gift, chat, follow, like, share).
 
 ## Games (gift-driven mini game in the overlay)
 
@@ -139,7 +139,9 @@ node apps/platform/scripts/demo-feed.mjs <publicToken> --url http://localhost:30
 |---|---|
 | **Gift** | laser damage to *every* asteroid equal to the coin value — floating damage numbers, screen shake, celebration banner for gifts ≥ 1,000 coins |
 | **Follow** | +15 HP to the base (shield flash) |
-| **Chat** | combo counter → score multiplier up to ×5 |
+| **Chat** (comment) | combo counter → score multiplier up to ×5 |
+| **Like** | charge meter — every 10 likes fires a targeted laser (12 damage) at the strongest asteroid |
+| **Share** | shockwave from the base: 20 damage to *all* asteroids + celebration banner |
 
 Difficulty ramps with time and score; if the base is destroyed it explodes and **auto-respawns** after 2.5s (the overlay never freezes on a game-over screen). The Inspector offers a difficulty picker (**Santai / Normal / Gila**).
 

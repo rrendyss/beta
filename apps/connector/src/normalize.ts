@@ -80,3 +80,25 @@ export function normalizeFollow(user: RawUser | null | undefined): NormalizedEve
     createdAt: new Date().toISOString(),
   };
 }
+
+/** Like → NormalizedEvent (amount 0; satu event = satu charge like). */
+export function normalizeLike(user: RawUser | null | undefined): NormalizedEvent {
+  return {
+    id: randomUUID(),
+    type: "like",
+    user: userName(user),
+    amount: 0,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+/** Share (penonton membagikan stream) → NormalizedEvent (amount 0). */
+export function normalizeShare(user: RawUser | null | undefined): NormalizedEvent {
+  return {
+    id: randomUUID(),
+    type: "share",
+    user: userName(user),
+    amount: 0,
+    createdAt: new Date().toISOString(),
+  };
+}

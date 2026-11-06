@@ -2,7 +2,11 @@
 // --fast, pastikan event sampai ke room (simulasi overlay runtime).
 import { io } from "socket.io-client";
 import { execFileSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 const prisma = new PrismaClient();
 const BASE = process.env.BASE_URL ?? "http://localhost:3100";
@@ -28,7 +32,7 @@ await new Promise((resolve, reject) => {
 });
 console.log("✓ join room:", overlay.id);
 
-execFileSync("node", ["scripts/demo-feed.mjs", token, "--url", BASE, "--fast"], { stdio: "inherit" });
+execFileSync("node", [path.join(HERE, "demo-feed.mjs"), token, "--url", BASE, "--fast"], { stdio: "inherit" });
 await new Promise((r) => setTimeout(r, 1500));
 
 const types = {};
@@ -36,7 +40,7 @@ for (const ev of received) types[ev.type] = (types[ev.type] ?? 0) + 1;
 const totalCoins = received.filter((e) => e.type === "gift").reduce((s, e) => s + e.amount, 0);
 console.log(`\nditerima di room: ${received.length} event`, types, `— total koin gift: ${totalCoins}`);
 if (received.length < 30) { console.error("✗ event kurang dari naskah"); process.exit(1); }
-if (!types.gift || !types.chat || !types.follow) { console.error("✗ tipe tidak lengkap"); process.exit(1); }
+if (!types.gift || !types.chat || !types.follow || !types.like || !types.share) { console.error("✗ tipe tidak lengkap"); process.exit(1); }
 if (totalCoins !== 76501) { console.error(`✗ total koin tidak sesuai naskah: ${totalCoins}`); process.exit(1); }
 console.log("SEMUA VERIFIKASI LULUS ✓");
 

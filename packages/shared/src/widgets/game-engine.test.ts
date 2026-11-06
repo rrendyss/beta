@@ -51,6 +51,20 @@ function follow(): NormalizedEvent {
     createdAt: new Date().toISOString(),
   };
 }
+function like(): NormalizedEvent {
+  seq += 1;
+  return {
+    id: `l-${seq}`, type: "like", user: "tester", amount: 0,
+    createdAt: new Date().toISOString(),
+  };
+}
+function share(): NormalizedEvent {
+  seq += 1;
+  return {
+    id: `s-${seq}`, type: "share", user: "tester", amount: 0,
+    createdAt: new Date().toISOString(),
+  };
+}
 
 describe("GalaxyDefenseEngine", () => {
   it("step menggambar HUD (judul, skor, HP, menunggu event)", () => {
@@ -89,6 +103,36 @@ describe("GalaxyDefenseEngine", () => {
     const engine = new GalaxyDefenseEngine(canvas);
     engine.push(follow());
     expect(engine.stats.hp).toBe(100); // sudah penuh — tetap 100
+  });
+
+  it("like mengisi charge: laser ditembakkan tepat setiap 10 like", () => {
+    const { canvas } = makeCanvas();
+    const engine = new GalaxyDefenseEngine(canvas);
+    for (let i = 0; i < 9; i++) engine.push(like());
+    expect(engine.stats.likes).toBe(9);
+    expect(engine.stats.beams).toBe(0); // belum ke-10 — belum ada laser
+    engine.push(like());
+    expect(engine.stats.likes).toBe(10);
+    expect(engine.stats.beams).toBeGreaterThanOrEqual(1); // laser ke-10 ditembakkan
+  });
+
+  it("share memicu gelombang kejut: damage semua asteroid + banner", () => {
+    const { canvas, fillTexts } = makeCanvas();
+    const engine = new GalaxyDefenseEngine(canvas);
+    engine.step(0.016); // pastikan minimal 1 asteroid (spawn ambient)
+    const before = engine.stats.asteroids;
+    expect(before).toBeGreaterThanOrEqual(1);
+
+    engine.push(share());
+    expect(engine.stats.shares).toBe(1);
+    expect(engine.stats.waves).toBeGreaterThanOrEqual(1); // cincin kejut aktif
+
+    // 2× share = 40 damage → semua asteroid (hp 10–24) pasti hancur
+    engine.push(share());
+    expect(engine.stats.asteroids).toBe(0);
+
+    engine.step(0.016);
+    expect(fillTexts.some((t) => t.includes("membagikan stream"))).toBe(true);
   });
 
   it("asteroid yang sampai dasar mengurangi HP base", () => {

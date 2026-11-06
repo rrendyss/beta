@@ -78,7 +78,7 @@ describe("SimSession", () => {
     const giftNames = new Set(SIM_GIFTS.map((g) => g.name));
     const users = new Set(SIM_USERS);
     for (const ev of events) {
-      expect(["gift", "chat", "follow"]).toContain(ev.type);
+      expect(["gift", "chat", "follow", "like", "share"]).toContain(ev.type);
       expect(typeof ev.id).toBe("string");
       expect(users.has(ev.user)).toBe(true);
       expect(typeof ev.createdAt).toBe("string");
@@ -91,8 +91,8 @@ describe("SimSession", () => {
         expect(ev.amount).toBe(0);
       }
     }
-    // pastikan ketiga tipe sempat muncul dalam 300 tick
-    expect(new Set(events.map((e) => e.type)).size).toBe(3);
+    // pastikan kelima tipe sempat muncul dalam 300 tick
+    expect(new Set(events.map((e) => e.type)).size).toBe(5);
   });
 
   it("stop() memancarkan status disconnected", async () => {

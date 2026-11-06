@@ -1,12 +1,12 @@
 // Event TikTok yang dinormalisasi — kontrak connector → hub → overlay.
 
-export type EventType = "gift" | "chat" | "follow";
+export type EventType = "gift" | "chat" | "follow" | "like" | "share";
 
 export interface NormalizedEvent {
   id: string;
   type: EventType;
   user: string;
-  /** Nilai koin gift (0 untuk chat/follow). */
+  /** Nilai koin gift (0 untuk chat/follow/like/share). */
   amount: number;
   data?: {
     giftName?: string;
@@ -65,6 +65,6 @@ export function makeSampleEvent(type: EventType, overrides?: Partial<NormalizedE
 }
 
 export function makeSampleEvents(count = 8): NormalizedEvent[] {
-  const types: EventType[] = ["gift", "chat", "follow", "gift", "chat", "gift", "follow", "gift"];
+  const types: EventType[] = ["gift", "chat", "follow", "like", "gift", "chat", "share", "gift"];
   return Array.from({ length: count }, (_, i) => makeSampleEvent(types[i % types.length]));
 }

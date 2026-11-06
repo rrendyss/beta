@@ -2,7 +2,7 @@ import { apiError, readJson } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { redisPub } from "@/lib/redis";
 
-const VALID_TYPES = new Set(["gift", "chat", "follow"]);
+const VALID_TYPES = new Set(["gift", "chat", "follow", "like", "share"]);
 
 /**
  * POST /api/ingest/[token] — connector (atau tool testing) mengirim event

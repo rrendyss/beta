@@ -13,6 +13,8 @@ import {
   normalizeChat,
   normalizeFollow,
   normalizeGift,
+  normalizeLike,
+  normalizeShare,
   type RawGiftPayload,
   type RawUser,
 } from "./normalize.js";
@@ -45,9 +47,13 @@ export class SimSession {
     const user: RawUser = { uniqueId: MOCK_USERS[this.n % MOCK_USERS.length] };
     const roll = Math.random();
 
-    if (roll < 0.62) {
+    // Distribusi menyerupai live stream: chat 44%, like 18%, gift 28%,
+    // share 6%, follow 4%.
+    if (roll < 0.44) {
       this.onEvent(normalizeChat(user, pick(MOCK_CHAT_LINES)));
-    } else if (roll < 0.93) {
+    } else if (roll < 0.62) {
+      this.onEvent(normalizeLike(user));
+    } else if (roll < 0.9) {
       const gift = pickWeightedGift();
       const raw: RawGiftPayload = {
         gift: { id: gift.name, name: gift.name, diamondCount: gift.coins, type: 0 },
@@ -57,6 +63,8 @@ export class SimSession {
       };
       const ev = normalizeGift(user, raw);
       if (ev) this.onEvent(ev);
+    } else if (roll < 0.96) {
+      this.onEvent(normalizeShare(user));
     } else {
       this.onEvent(normalizeFollow(user));
     }

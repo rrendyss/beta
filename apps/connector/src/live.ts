@@ -2,7 +2,7 @@
 // (rilis MIT terakhir), dimuat dinamis agar kegagalannya tidak mematikan
 // service. Termasuk reconnect dengan exponential backoff saat stream berakhir.
 import type { NormalizedEvent } from "@mocci/shared";
-import { normalizeChat, normalizeFollow, normalizeGift } from "./normalize.js";
+import { normalizeChat, normalizeFollow, normalizeGift, normalizeLike, normalizeShare } from "./normalize.js";
 
 type AnyConn = Record<string, any>;
 type AnyCtor = new (username: string, options?: Record<string, unknown>) => AnyConn;
@@ -85,9 +85,11 @@ export class LiveSession {
       const ev = normalizeGift(d?.user, d);
       if (ev) this.onEvent(ev);
     });
+    on("like", (d) => this.onEvent(normalizeLike(d?.user)));
     on("social", (d) => {
       const hay = `${d?.displayType ?? ""} ${d?.action ?? ""}`.toLowerCase();
-      if (!hay.includes("share")) this.onEvent(normalizeFollow(d?.user));
+      if (hay.includes("share")) this.onEvent(normalizeShare(d?.user));
+      else this.onEvent(normalizeFollow(d?.user));
     });
     on("room_user", (d) => {
       // viewers dipakai status panel (fase 2) — diabaikan untuk beta.

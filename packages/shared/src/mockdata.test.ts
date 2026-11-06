@@ -24,15 +24,12 @@ describe("pool mock", () => {
 describe("MockEventGenerator", () => {
   it("pola cycle deterministik: gift dijamin sejak event ke-3", () => {
     const gen = new MockEventGenerator();
-    const first6 = Array.from({ length: 6 }, () => gen.next());
-    expect(first6.map((e) => e.type)).toEqual([
-      "chat", "chat", "gift", "follow", "chat", "gift",
-    ]);
+    const cycle = ["chat", "chat", "gift", "follow", "like", "chat", "gift", "share"];
+    const first8 = Array.from({ length: 8 }, () => gen.next());
+    expect(first8.map((e) => e.type)).toEqual(cycle);
     // seluruh siklus berikutnya tetap konsisten
-    const next6 = Array.from({ length: 6 }, () => gen.next());
-    expect(next6.map((e) => e.type)).toEqual([
-      "chat", "chat", "gift", "follow", "chat", "gift",
-    ]);
+    const next8 = Array.from({ length: 8 }, () => gen.next());
+    expect(next8.map((e) => e.type)).toEqual(cycle);
   });
 
   it("event memenuhi kontrak NormalizedEvent dan berasal dari pool", () => {

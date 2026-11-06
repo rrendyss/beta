@@ -4,6 +4,8 @@ import {
   normalizeChat,
   normalizeFollow,
   normalizeGift,
+  normalizeLike,
+  normalizeShare,
   userName,
 } from "../src/normalize.js";
 
@@ -69,6 +71,31 @@ describe("normalizeFollow", () => {
     expect(ev.type).toBe("follow");
     expect(ev.user).toBe("Dewi");
     expect(ev.amount).toBe(0);
+  });
+});
+
+describe("normalizeLike", () => {
+  it("memetakan like dengan amount 0 (satu event = satu charge)", () => {
+    const ev = normalizeLike({ nickname: "Dewi" });
+    expect(ev.type).toBe("like");
+    expect(ev.user).toBe("Dewi");
+    expect(ev.amount).toBe(0);
+    expect(typeof ev.id).toBe("string");
+    expect(Number.isNaN(Date.parse(ev.createdAt))).toBe(false);
+  });
+
+  it("fallback anonymous saat payload kosong", () => {
+    expect(normalizeLike(null).user).toBe("anonymous");
+  });
+});
+
+describe("normalizeShare", () => {
+  it("memetakan share dengan amount 0", () => {
+    const ev = normalizeShare({ nickname: "Rian" });
+    expect(ev.type).toBe("share");
+    expect(ev.user).toBe("Rian");
+    expect(ev.amount).toBe(0);
+    expect(Number.isNaN(Date.parse(ev.createdAt))).toBe(false);
   });
 });
 

@@ -26,6 +26,8 @@ interface Particle { x: number; y: number; vx: number; vy: number; life: number;
 interface Floater { x: number; y: number; text: string; color: string; size: number; life: number; max: number }
 interface Star { x: number; y: number; v: number; s: number }
 interface Banner { text: string; color: string; life: number }
+/** Gelombang kejut dari base saat share. */
+interface Wave { life: number; max: number }
 
 /** Snapshot state untuk keperluan tes/inspeksi. */
 export interface GameStats {
@@ -36,6 +38,10 @@ export interface GameStats {
   asteroids: number;
   dead: boolean;
   gotEvent: boolean;
+  likes: number;
+  shares: number;
+  beams: number;
+  waves: number;
 }
 
 const fmt = (n: number) => Math.round(n).toLocaleString("id-ID");
@@ -70,11 +76,14 @@ export class GalaxyDefenseEngine {
   private shield = 0;
   private gotEvent = false;
   private banner: Banner | null = null;
+  private likes = 0;
+  private shares = 0;
 
   private asteroids: Asteroid[] = [];
   private beams: Beam[] = [];
   private parts: Particle[] = [];
   private floaters: Floater[] = [];
+  private waves: Wave[] = [];
   private stars: Star[] = [];
   private seenIds = new Set<string>();
 
@@ -134,6 +143,10 @@ export class GalaxyDefenseEngine {
       asteroids: this.asteroids.length,
       dead: this.dead > 0,
       gotEvent: this.gotEvent,
+      likes: this.likes,
+      shares: this.shares,
+      beams: this.beams.length,
+      waves: this.waves.length,
     };
   }
 
@@ -151,6 +164,8 @@ export class GalaxyDefenseEngine {
     if (ev.type === "gift") this.onGift(ev);
     else if (ev.type === "follow") this.onFollow(ev);
     else if (ev.type === "chat") this.onChat();
+    else if (ev.type === "like") this.onLike();
+    else if (ev.type === "share") this.onShare(ev);
   }
 
   private onGift(ev: NormalizedEvent): void {
@@ -170,16 +185,7 @@ export class GalaxyDefenseEngine {
       this.floater(a.x, a.y, "-" + fmt(amount), amount >= 1000 ? "#fbbf24" : "#fda4af",
         12 + Math.min(10, Math.log10(amount + 1) * 3));
     }
-    const alive: Asteroid[] = [];
-    for (const a of this.asteroids) {
-      if (a.hp <= 0) {
-        this.explode(a);
-        this.floater(a.x, a.y - a.r, "HANCUR", "#fdba74", 12);
-      } else {
-        alive.push(a);
-      }
-    }
-    this.asteroids = alive;
+    this.killDead();
     this.shake = Math.min(20, this.shake + 2 + Math.log10(amount + 1) * 3.2);
     this.flash = Math.min(0.4, this.flash + 0.05 + amount / 26000);
     const name = (ev.data && ev.data.giftName) || "gift";
@@ -211,6 +217,69 @@ export class GalaxyDefenseEngine {
       this.mult = nm;
       this.floater(this.W / 2, this.H * 0.4, "KOMBO x" + nm, "#fbbf24", 22);
     }
+  }
+
+  /**
+   * Like = charge. Setiap 10 like menembakkan satu laser ke asteroid
+   * terkuat (12 damage) — like penonton tetap terasa tanpa menyaingi gift.
+   */
+  private onLike(): void {
+    this.gotEvent = true;
+    this.likes += 1;
+    if (this.likes % 10 !== 0) return;
+    const c = this.cannon();
+    let target: Asteroid | null = null;
+    for (const a of this.asteroids) {
+      if (!target || a.hp > target.hp) target = a;
+    }
+    if (!target) {
+      // belum ada asteroid — tembak langit agar like tetap terlihat
+      this.beams.push({ x1: c.x, y1: c.y, x2: c.x + rnd(-60, 60) * this.U, y2: c.y - this.H * 0.5, life: 0.3 });
+      this.floater(c.x, c.y - 60 * this.U, "⚡ " + this.likes + " LIKE!", "#67e8f9", 16);
+      this.shake = Math.min(6, this.shake + 2);
+      return;
+    }
+    const dmg = 12;
+    target.hp -= dmg;
+    target.hit = 0.14;
+    this.beams.push({ x1: c.x, y1: c.y, x2: target.x, y2: target.y, life: 0.3 });
+    this.floater(target.x, target.y, "-" + dmg + " ⚡", "#67e8f9", 13);
+    this.killDead();
+    this.shake = Math.min(8, this.shake + 2);
+  }
+
+  /**
+   * Share = gelombang kejut dari base: 20 damage ke SEMUA asteroid,
+   * kilau, dan banner — momen langka yang layak dirayakan.
+   */
+  private onShare(ev: NormalizedEvent): void {
+    this.gotEvent = true;
+    this.shares += 1;
+    const dmg = 20;
+    for (const a of this.asteroids) {
+      a.hp -= dmg;
+      a.hit = 0.14;
+      this.floater(a.x, a.y, "-" + dmg, "#fbbf24", 13);
+    }
+    this.killDead();
+    this.waves.push({ life: 0.7, max: 0.7 });
+    this.shake = Math.min(10, this.shake + 4);
+    this.flash = Math.min(0.25, this.flash + 0.1);
+    this.setBanner(ev.user + " membagikan stream!", "#34d399");
+  }
+
+  /** Buang asteroid mati (hp ≤ 0) dengan ledakan. */
+  private killDead(): void {
+    const alive: Asteroid[] = [];
+    for (const a of this.asteroids) {
+      if (a.hp <= 0) {
+        this.explode(a);
+        this.floater(a.x, a.y - a.r, "HANCUR", "#fdba74", 12);
+      } else {
+        alive.push(a);
+      }
+    }
+    this.asteroids = alive;
   }
 
   // ── Simulasi ───────────────────────────────────────────────────────────────
@@ -362,6 +431,10 @@ export class GalaxyDefenseEngine {
       f.life -= d;
       f.y -= 34 * this.U * d;
       if (f.life <= 0) this.floaters.splice(i, 1);
+    }
+    for (let i = this.waves.length - 1; i >= 0; i--) {
+      this.waves[i].life -= d;
+      if (this.waves[i].life <= 0) this.waves.splice(i, 1);
     }
     for (const st of this.stars) {
       st.y += (st.v * d) / this.H;
@@ -534,6 +607,18 @@ export class GalaxyDefenseEngine {
     }
 
     for (const a of this.asteroids) this.drawAsteroid(a);
+
+    // gelombang kejut share — cincin membesar dari base
+    for (const w of this.waves) {
+      const t = 1 - Math.max(0, w.life) / w.max; // 0 → 1
+      ctx.globalAlpha = (1 - t) * 0.9;
+      ctx.strokeStyle = "#34d399";
+      ctx.lineWidth = Math.max(1, 5 * (1 - t));
+      ctx.beginPath();
+      ctx.arc(W / 2, by + bh / 2, 30 * U + t * Math.max(W, H) * 0.55, 0, 6.29);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
 
     // sinar laser hadiah
     for (const b of this.beams) {

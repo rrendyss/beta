@@ -70,11 +70,12 @@ export function pickStreakCount(gift: MockGift): number {
 }
 
 /**
- * Pola tipe berulang: chat, chat, gift, follow, chat, gift.
+ * Pola tipe berulang: chat, chat, gift, follow, like, chat, gift, share.
  * Deterministik — gift dijamin muncul sejak event ke-3 sehingga preview
- * selalu terlihat hidup dalam ~2 detik pertama (tanpa mengandalkan acak).
+ * selalu terlihat hidup dalam ~2 detik pertama (tanpa mengandalkan acak);
+ * like (ke-5) dan share (ke-8) ikut teruji di demo.
  */
-const TYPE_CYCLE = ["chat", "chat", "gift", "follow", "chat", "gift"] as const;
+const TYPE_CYCLE = ["chat", "chat", "gift", "follow", "like", "chat", "gift", "share"] as const;
 
 /**
  * Generator event mock untuk mode demo (?demo=1) — memutar pola tipe
@@ -94,7 +95,7 @@ export class MockEventGenerator {
     if (type === "chat") {
       return { id, type, user, amount: 0, data: { message: pick(MOCK_CHAT_LINES) }, createdAt };
     }
-    if (type === "follow") {
+    if (type === "follow" || type === "like" || type === "share") {
       return { id, type, user, amount: 0, createdAt };
     }
     const gift = pickWeightedGift();

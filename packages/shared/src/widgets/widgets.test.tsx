@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { NormalizedEvent } from "../events.js";
 import { ChatBox } from "./ChatBox.js";
 import { EventFeedProvider } from "./EventFeedContext.js";
+import { GameCanvas } from "./GameCanvas.js";
 import { GiftAlert } from "./GiftAlert.js";
 import { GoalCounter } from "./GoalCounter.js";
 import { Leaderboard } from "./Leaderboard.js";
@@ -167,5 +168,27 @@ describe("Widget absen dari scene", () => {
     );
     expect(document.body.textContent).not.toContain("pesan rahasia");
     expect(document.body.textContent).toContain("budi");
+  });
+});
+
+describe("GameCanvas (game bawaan)", () => {
+  it("drag-drop tanpa URL: merender kanvas game, tanpa placeholder teks", () => {
+    const orig = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = (() => null) as typeof orig;
+    try {
+      render(
+        <EventFeedProvider
+          events={[ev({ type: "gift", user: "sari", amount: 500, data: { giftName: "Galaxy", giftCount: 1 } })]}
+        >
+          <GameCanvas config={{ difficulty: "normal" }} />
+        </EventFeedProvider>,
+      );
+      expect(document.querySelector("canvas")).not.toBeNull();
+      // tanpa URL/iframe — tidak ada teks placeholder maupun elemen iframe
+      expect(document.body.textContent).toBe("");
+      expect(document.querySelector("iframe")).toBeNull();
+    } finally {
+      HTMLCanvasElement.prototype.getContext = orig;
+    }
   });
 });

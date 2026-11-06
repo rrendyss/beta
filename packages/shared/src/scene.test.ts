@@ -21,7 +21,8 @@ describe("defaultLayerConfig", () => {
 
   it("config default image & game-canvas boleh kosong (placeholder)", () => {
     expect(defaultLayerConfig("image")).toMatchObject({ src: "", fit: "contain" });
-    expect(defaultLayerConfig("game-canvas")).toMatchObject({ url: "" });
+    // game bawaan — tanpa URL, tinggal drag-drop
+    expect(defaultLayerConfig("game-canvas")).toMatchObject({ difficulty: "normal" });
   });
 });
 
@@ -41,6 +42,6 @@ describe("parseScene roundtrip", () => {
     const parsed = parseScene(JSON.parse(JSON.stringify(scene)));
     expect(parsed.layers).toHaveLength(2);
     expect(parsed.layers[0].config).toMatchObject({ src: "" });
-    expect(parsed.layers[1].config).toMatchObject({ url: "" });
+    expect(parsed.layers[1].config).toMatchObject({ difficulty: "normal" });
   });
 });

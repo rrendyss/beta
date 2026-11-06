@@ -60,8 +60,10 @@ test("alur penuh streamer: daftar → dashboard → editor → overlay live", as
   await page.goto(`/overlay/${token}`);
   await expect(page.getByText("🏆 Top Gifters")).toBeVisible();
   await expect(page.getByText("🎯 Goal")).toBeVisible();
-  // Widget image/game dengan config default menampilkan placeholder, bukan error
+  // Widget image dengan config default menampilkan placeholder, bukan error
   await expect(page.getByText("Atur URL gambar di Inspector")).toBeVisible();
+  // Game bawaan langsung merender kanvas game — drag-drop, tanpa URL/iframe
+  await expect(page.locator("canvas").first()).toBeVisible();
 
   // 6. Ingest gift terkontrol → widget ter-update (< ~2s).
   // Origin diambil dari URL halaman = server E2E (bukan host hardcode).

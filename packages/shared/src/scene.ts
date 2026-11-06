@@ -45,8 +45,11 @@ export const imageConfigSchema = z.object({
 });
 
 export const gameCanvasConfigSchema = z.object({
-  /** Kosong = belum diatur; widget menampilkan placeholder. */
-  url: z.string().default(""),
+  /**
+   * Game bawaan "Galaxy Defense" — widget native, tanpa URL.
+   * Event masuk dari feed overlay yang sama seperti widget lain.
+   */
+  difficulty: z.enum(["santai", "normal", "gila"]).default("normal"),
 });
 
 // ─── Layer & scene ────────────────────────────────────────────────────────────

@@ -343,15 +343,28 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
         )}
 
         {layer.type === "game-canvas" && (
-          <div>
-            <label className={labelCls}>URL game (iframe)</label>
-            <input
-              value={String(cfg.url ?? "")}
-              onFocus={pushHistory}
-              onChange={(e) => setCfg("url", e.target.value)}
-              placeholder="http://localhost:4001/games/galaxy-defense?token=…"
-              className={inputCls}
-            />
+          <div className="space-y-3">
+            <div>
+              <label className={labelCls}>Game bawaan</label>
+              <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs leading-relaxed text-zinc-400">
+                <span className="font-medium text-violet-300">Galaxy Defense</span> — gift penonton
+                menembak asteroid, follow memulihkan HP base, chat menaikkan kombo. Tanpa URL;
+                event mengalir otomatis dari feed overlay ini.
+              </p>
+            </div>
+            <div>
+              <label className={labelCls}>Tingkat kesulitan</label>
+              <select
+                value={String(cfg.difficulty ?? "normal")}
+                onFocus={pushHistory}
+                onChange={(e) => setCfg("difficulty", e.target.value)}
+                className={inputCls}
+              >
+                <option value="santai">Santai</option>
+                <option value="normal">Normal</option>
+                <option value="gila">Gila</option>
+              </select>
+            </div>
           </div>
         )}
       </section>

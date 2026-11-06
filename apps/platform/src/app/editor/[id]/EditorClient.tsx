@@ -227,6 +227,19 @@ export function EditorClient({ overlayId, name, publicToken, initialScene }: Edi
           >
             Copy URL Overlay
           </button>
+          <button
+            onClick={() =>
+              window.open(
+                `${window.location.origin}/overlay/${publicToken}?demo=1`,
+                "_blank",
+                "noopener",
+              )
+            }
+            className="rounded-lg border border-zinc-800 px-3 py-1.5 text-xs transition hover:border-violet-500 hover:text-violet-300"
+            title="Pratinjau overlay dengan data demo (tanpa TikTok/connector)"
+          >
+            ▶ Pratinjau Demo
+          </button>
         </div>
       </header>
 

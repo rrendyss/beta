@@ -112,7 +112,13 @@ Live mode uses `tiktok-live-connector` 2.4.0 with exponential-backoff reconnects
 
 ## Demo feed (mock events without the connector)
 
-To demo an overlay with a *curated* narrative (opening chat, small gifts, follows, a big Galaxy moment, and a Universe climax) push the scripted sequence straight through the ingest API:
+**From the editor:** click **▶ Pratinjau Demo** in the toolbar — it opens the real overlay with `?demo=1`, which starts a *local* mock-event pump in the browser (no connector, no scripts). A small `DEMO · data tiruan` badge marks the mode; the deterministic cycle guarantees a gift alert within ~2s. The same flag works on any overlay URL:
+
+```
+http://localhost:3000/overlay/<token>?demo=1
+```
+
+For a curated *narrative* demo (opening chat, small gifts, follows, a big Galaxy moment, and a Universe climax) push the scripted sequence straight through the ingest API:
 
 ```bash
 node apps/platform/scripts/demo-feed.mjs <publicToken>                      # paced, ~30s

@@ -4,6 +4,7 @@ export const APP_NAME = "Mocci";
 
 export * from "./scene";
 export * from "./events";
+export * from "./mockdata";
 export * from "./widgets/config";
 export * from "./widgets/EventFeedContext";
 export * from "./widgets/WidgetRenderer";

@@ -2,13 +2,13 @@
 import { describe, expect, it } from "vitest";
 import type { NormalizedEvent } from "@mocci/shared";
 import {
+  MOCK_CHAT_LINES as SIM_CHAT_LINES,
+  MOCK_GIFTS as SIM_GIFTS,
+  MOCK_USERS as SIM_USERS,
   pickStreakCount,
   pickWeightedGift,
-  SIM_CHAT_LINES,
-  SIM_GIFTS,
-  SIM_USERS,
-  SimSession,
-} from "../src/sim.js";
+} from "@mocci/shared/mockdata";
+import { SimSession } from "../src/sim.js";
 
 describe("pool data simulasi", () => {
   it("user & chat cukup banyak dan unik/d relevan", () => {

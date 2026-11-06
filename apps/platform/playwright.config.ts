@@ -1,5 +1,13 @@
 import { defineConfig } from "@playwright/test";
 
+// Muat .env aplikasi untuk spec (Prisma fixture & iron-session) — di CI
+// env disediakan oleh workflow, file .env mungkin tidak ada.
+try {
+  process.loadEnvFile(".env");
+} catch {
+  /* tanpa .env — andalkan env lingkungan */
+}
+
 // Port khusus E2E agar tidak pernah menabrak server dev/start pengguna di :3000.
 const PORT = 3100;
 

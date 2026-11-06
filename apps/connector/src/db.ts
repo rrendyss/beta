@@ -30,6 +30,17 @@ export async function findOverlay(
   return res.rows[0] ?? null;
 }
 
+/** Resolusi publicToken → overlay — untuk stream game (?token=). */
+export async function findOverlayByPublicToken(
+  token: string,
+): Promise<{ id: string } | null> {
+  const res = await pool.query<{ id: string }>(
+    `SELECT id FROM "Overlay" WHERE "publicToken" = $1`,
+    [token],
+  );
+  return res.rows[0] ?? null;
+}
+
 export async function listConnections(): Promise<ConnectionRow[]> {
   const res = await pool.query<ConnectionRow>(
     `SELECT id, "userId", platform, username, status, "createdAt", "updatedAt"

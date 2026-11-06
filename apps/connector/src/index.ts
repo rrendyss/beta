@@ -2,7 +2,8 @@
 // Event dinormalisasi lalu dipublish ke Redis untuk direlay hub platform.
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { NormalizedEvent } from "@mocci/shared";
-import { findConnection, findOverlay, listConnections, pool, updateConnectionStatus, upsertConnection } from "./db.js";
+import { findConnection, findOverlay, findOverlayByPublicToken, listConnections, pool, updateConnectionStatus, upsertConnection } from "./db.js";
+import { gameHub, listGames, readGamePage, streamGameEvents } from "./games.js";
 import { LiveSession } from "./live.js";
 import { publishEvent, redisPub } from "./redis.js";
 import { SimSession } from "./sim.js";
@@ -54,6 +55,7 @@ function startSession(
   mode: "live" | "simulate",
 ): ActiveSession {
   const onEvent = (ev: NormalizedEvent) => {
+    gameHub.broadcast(overlayId, ev);
     void publishEvent(overlayId, ev).catch((err) =>
       console.warn("[connector] publish gagal:", err.message),
     );
@@ -103,13 +105,15 @@ const server = createServer((req, res) => {
   }
 
   const url = new URL(req.url ?? "/", `http://localhost:${PORT}`);
-  void handle(req, res, url.pathname).catch((err) => {
+  void handle(req, res, url).catch((err) => {
     console.error("[connector] handler error:", err);
     json(res, 500, { error: "internal error" });
   });
 });
 
-async function handle(req: IncomingMessage, res: ServerResponse, pathname: string): Promise<void> {
+async function handle(req: IncomingMessage, res: ServerResponse, url: URL): Promise<void> {
+  const { pathname } = url;
+
   if (req.method === "GET" && pathname === "/api/health") {
     json(res, 200, { ok: true, service: "connector", sessions: sessions.size });
     return;
@@ -167,6 +171,41 @@ async function handle(req: IncomingMessage, res: ServerResponse, pathname: strin
     await stopSession(id);
     await updateConnectionStatus(id, "disconnected");
     json(res, 200, { ok: true });
+    return;
+  }
+
+  // ── Games (stream event + halaman game) ───────────────────────────────────
+  if (req.method === "GET" && pathname === "/api/games/stream") {
+    const token = url.searchParams.get("token")?.trim() ?? "";
+    const overlayIdParam = url.searchParams.get("overlayId")?.trim() ?? "";
+    let overlayId: string | null = null;
+    if (token) {
+      overlayId = (await findOverlayByPublicToken(token))?.id ?? null;
+    } else if (overlayIdParam) {
+      overlayId = (await findOverlay(overlayIdParam))?.id ?? null;
+    }
+    if (!overlayId) {
+      json(res, 404, { error: "Overlay tidak ditemukan (token/overlayId)" });
+      return;
+    }
+    streamGameEvents(res, overlayId);
+    return;
+  }
+
+  if (req.method === "GET" && pathname === "/games") {
+    json(res, 200, { games: await listGames() });
+    return;
+  }
+
+  const gameMatch = req.method === "GET" && pathname.match(/^\/games\/([^/]+)$/);
+  if (gameMatch) {
+    const page = await readGamePage(decodeURIComponent(gameMatch[1]));
+    if (page === null) {
+      json(res, 404, { error: "Game tidak ditemukan" });
+      return;
+    }
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    res.end(page);
     return;
   }
 

@@ -349,7 +349,7 @@ export function Inspector({ layer, onLive, pushHistory, onDelete, onReorder }: I
               value={String(cfg.url ?? "")}
               onFocus={pushHistory}
               onChange={(e) => setCfg("url", e.target.value)}
-              placeholder="https://…"
+              placeholder="http://localhost:4001/games/galaxy-defense?token=…"
               className={inputCls}
             />
           </div>

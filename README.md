@@ -128,6 +128,30 @@ node apps/platform/scripts/demo-feed.mjs <publicToken> --url http://localhost:30
 
 `<publicToken>` is the last segment of the overlay URL (or from **Copy URL Overlay** in the editor). The script prints each event as it sends and reports totals — 31 events, 76,501 coins.
 
+## Games (gift-driven mini game in the overlay)
+
+The **Game Canvas** widget embeds any URL in an iframe — and the connector itself serves built-in games, because the connector owns the live event stream. Events reach the game over **SSE**, straight from the active session:
+
+```bash
+http://localhost:4001/games/galaxy-defense   # the game page
+GET /games                                    # list available games
+GET /api/games/stream?token=<publicToken>     # SSE stream (or overlayId=)
+```
+
+### Galaxy Defense
+
+Asteroids drift toward your base; viewers' gifts are your firepower:
+
+| Event | Effect in game |
+|---|---|
+| **Gift** | laser damage to *every* asteroid equal to the coin value — floating damage numbers, screen shake, celebration banner for gifts ≥ 1,000 coins |
+| **Follow** | +15 HP to the base (shield flash) |
+| **Chat** | combo counter → score multiplier up to ×5 |
+
+Difficulty ramps with time and score; if the base is destroyed it explodes and **auto-respawns** after 2.5s (the overlay never freezes on a game-over screen). While the connector is down the game shows *“Koneksi event terputus — mencoba lagi…”*.
+
+Wire it up: add a **Game Canvas** widget in the editor and set the URL to `http://localhost:4001/games/galaxy-defense?token=<publicToken>` (the field placeholder shows the pattern). Simulated connections count too — start `mode: simulate` and the game plays immediately.
+
 ## Testing
 
 ```bash
@@ -141,6 +165,7 @@ pnpm --filter connector start &                 # connector on :4001
 node apps/platform/scripts/test-api-errors.mjs     # API error audit (400/401/403/404)
 node apps/platform/scripts/test-hub.mjs            # hub relay: ingest → socket room
 node apps/platform/scripts/test-connector.mjs      # connector → Redis → hub → room
+node apps/platform/scripts/test-game.mjs           # game page + SSE stream from sim session
 BASE_URL=http://localhost:3000 node apps/platform/scripts/test-demo-feed.mjs  # demo feed → room
 cd apps/platform && npx playwright test            # full UI flow in system Chrome
 ```

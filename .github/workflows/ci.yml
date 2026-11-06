@@ -78,6 +78,9 @@ jobs:
       - name: Connector integration
         run: node apps/platform/scripts/test-connector.mjs
 
+      - name: Game (page + SSE) integration
+        run: node apps/platform/scripts/test-game.mjs
+
       - name: Demo feed integration
         run: node apps/platform/scripts/test-demo-feed.mjs
         env:

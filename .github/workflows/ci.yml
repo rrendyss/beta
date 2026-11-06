@@ -78,5 +78,10 @@ jobs:
       - name: Connector integration
         run: node apps/platform/scripts/test-connector.mjs
 
+      - name: Demo feed integration
+        run: node apps/platform/scripts/test-demo-feed.mjs
+        env:
+          BASE_URL: http://localhost:3000
+
       - name: Playwright E2E (system Chrome)
         run: npx playwright install --with-deps chrome && pnpm --filter platform exec playwright test

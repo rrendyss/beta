@@ -108,7 +108,19 @@ curl http://localhost:4001/api/connections
 curl -X DELETE http://localhost:4001/api/connections/<connection-id>
 ```
 
-Live mode uses `tiktok-live-connector` 2.4.0 with exponential-backoff reconnects (1s → 30s). Simulation mode emits weighted chat/gift/follow events every ~650ms — perfect for designing without a live stream.
+Live mode uses `tiktok-live-connector` 2.4.0 with exponential-backoff reconnects (1s → 30s). Simulation mode emits weighted events every ~650ms from a realistic mock dataset — **22 Indonesian-style usernames, 30+ chat lines, and a real-value TikTok gift catalog** (Rose ×1 … TikTok Universe 44,999 coins, cheap gifts come in streaks like Rose ×24) — perfect for designing without a live stream.
+
+## Demo feed (mock events without the connector)
+
+To demo an overlay with a *curated* narrative (opening chat, small gifts, follows, a big Galaxy moment, and a Universe climax) push the scripted sequence straight through the ingest API:
+
+```bash
+node apps/platform/scripts/demo-feed.mjs <publicToken>                      # paced, ~30s
+node apps/platform/scripts/demo-feed.mjs <publicToken> --fast               # instant burst
+node apps/platform/scripts/demo-feed.mjs <publicToken> --url http://localhost:3000
+```
+
+`<publicToken>` is the last segment of the overlay URL (or from **Copy URL Overlay** in the editor). The script prints each event as it sends and reports totals — 31 events, 76,501 coins.
 
 ## Testing
 
@@ -123,6 +135,7 @@ pnpm --filter connector start &                 # connector on :4001
 node apps/platform/scripts/test-api-errors.mjs     # API error audit (400/401/403/404)
 node apps/platform/scripts/test-hub.mjs            # hub relay: ingest → socket room
 node apps/platform/scripts/test-connector.mjs      # connector → Redis → hub → room
+BASE_URL=http://localhost:3000 node apps/platform/scripts/test-demo-feed.mjs  # demo feed → room
 cd apps/platform && npx playwright test            # full UI flow in system Chrome
 ```
 

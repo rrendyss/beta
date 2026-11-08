@@ -8,6 +8,9 @@ export const MOCK_USERS = [
   "vira.tiktok", "joko.stream", "mel_central", "reno_p", "zara_says", "fikri.ogg",
   "bunda_sari", "agam.gaming", "putri_ireng", "hendra.gg", "caca_chaca",
   "ryandgz", "mama_dewi", "kucing_oreo", "bang_jago", "nina.boo",
+  "dedi.keren", "rina_ayu", "tono.stream", "wahyu.gg", "sinta.live", "eko_mirza",
+  "farhan.pk", "gita.tiktok", "haikal.v", "indah_sari", "jarwo.tv", "kevin.mln",
+  "lulu_cantik", "made.bali", "nanda.p", "okta.dev", "puput.w", "rizal.tj",
 ];
 
 /** Komentar chat mock — gaya chat live stream Indonesia. */
@@ -20,6 +23,13 @@ export const MOCK_CHAT_LINES = [
   "request lagu donk", "hujan gift bang", "sultan mampir", "wah galaxy nih",
   "auto menang", "feed-nya keren", "overlay-nya keren banget",
   "mainnya santuy tapi jago", "pokoknya tim streaming ini",
+  "mantap jiwa", "top markotop", "anjir keren", "aku juga mau",
+  "ini live dari mana?", "subrek dulu", "like nya dong", "viewer berapa nih",
+  "sore semua", "selamat malam", "akhirnya menang", "gampang kan",
+  "ada yang dari jogja?", "saya dari medan", "halo dari solo", "nonton dari kantor",
+  "ketawa ga berhenti", "widget nya keren", "minta diatur dong", "combo nya gila",
+  "next stream kapan?", "jangan lupa follow", "gift nya berapa", "sehat selalu ya",
+  "aku dari rumah", "sambil rebahan", "keren sih",
 ];
 
 export interface MockGift {
@@ -39,11 +49,17 @@ export interface MockGift {
 export const MOCK_GIFTS: MockGift[] = [
   { name: "Rose", coins: 1, weight: 44, streakMax: 50 },
   { name: "GG", coins: 1, weight: 10, streakMax: 10 },
+  { name: "Ice Cream Cone", coins: 1, weight: 22, streakMax: 30 },
   { name: "Finger Heart", coins: 5, weight: 14, streakMax: 20 },
+  { name: "Paper Plane", coins: 5, weight: 12, streakMax: 15 },
   { name: "Doughnut", coins: 30, weight: 10, streakMax: 10 },
+  { name: "Wristband", coins: 50, weight: 6, streakMax: 8 },
   { name: "Hand Hearts", coins: 100, weight: 8, streakMax: 5 },
+  { name: "Perfume", coins: 200, weight: 4, streakMax: 3 },
   { name: "Corgi", coins: 299, weight: 5, streakMax: 2 },
+  { name: "Swan", coins: 500, weight: 3, streakMax: 2 },
   { name: "Galaxy", coins: 1000, weight: 4, streakMax: 1 },
+  { name: "Dinosaur", coins: 5000, weight: 2, streakMax: 1 },
   { name: "Lion", coins: 29999, weight: 1, streakMax: 1 },
   { name: "TikTok Universe", coins: 44999, weight: 1, streakMax: 1 },
 ];

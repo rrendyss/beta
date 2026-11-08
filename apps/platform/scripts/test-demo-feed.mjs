@@ -41,7 +41,7 @@ const totalCoins = received.filter((e) => e.type === "gift").reduce((s, e) => s 
 console.log(`\nditerima di room: ${received.length} event`, types, `— total koin gift: ${totalCoins}`);
 if (received.length < 30) { console.error("✗ event kurang dari naskah"); process.exit(1); }
 if (!types.gift || !types.chat || !types.follow || !types.like || !types.share) { console.error("✗ tipe tidak lengkap"); process.exit(1); }
-if (totalCoins !== 76501) { console.error(`✗ total koin tidak sesuai naskah: ${totalCoins}`); process.exit(1); }
+if (totalCoins !== 82351) { console.error(`✗ total koin tidak sesuai naskah: ${totalCoins}`); process.exit(1); }
 console.log("SEMUA VERIFIKASI LULUS ✓");
 
 socket.close();

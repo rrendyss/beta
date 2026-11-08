@@ -28,6 +28,9 @@ export function makeSampleEvent(type: EventType, overrides?: Partial<NormalizedE
   const users = [
     "budi", "sari", "agung", "dewi", "rafa", "nadia_plays", "bayu.op",
     "bunda_sari", "sultan.live", "kucing_oreo", "bang_jago", "putri_ireng",
+    "dimas_afk", "vira.tiktok", "joko.stream", "mel_central", "reno_p",
+    "zara_says", "fikri.ogg", "hendra.gg", "caca_chaca", "mama_dewi",
+    "kimo_22", "nina.boo", "ryandgz", "agam.gaming",
   ];
   // Katalog gift dengan nilai koin nyata (menyerupai TikTok) agar demo
   // leaderboard/goal/alert menampilkan variasi yang berarti.
@@ -35,15 +38,22 @@ export function makeSampleEvent(type: EventType, overrides?: Partial<NormalizedE
     { name: "Rose", coins: 1 },
     { name: "Finger Heart", coins: 5 },
     { name: "Doughnut", coins: 30 },
+    { name: "Wristband", coins: 50 },
     { name: "Hand Hearts", coins: 100 },
+    { name: "Perfume", coins: 200 },
     { name: "Corgi", coins: 299 },
+    { name: "Swan", coins: 500 },
     { name: "Galaxy", coins: 1000 },
+    { name: "Dinosaur", coins: 5000 },
     { name: "Lion", coins: 29999 },
+    { name: "TikTok Universe", coins: 44999 },
   ];
   const messages = [
     "halo semuanya!", "gaskeun!", "wkwkwk", "mainnya jago", "support terus bang",
     "salam dari bandung", "baru join mau nanya", "hujan gift bang", "GG",
     "overlay-nya keren banget", "semangat streamnya", "sultan mampir",
+    "mantap jiwa", "subrek dulu", "like nya dong", "viewer berapa nih",
+    "akhirnya menang", "widget nya keren", "next stream kapan?", "sehat selalu ya",
   ];
   const user = users[counter % users.length];
   const gift = gifts[counter % gifts.length];

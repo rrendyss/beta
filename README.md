@@ -108,7 +108,7 @@ curl http://localhost:4001/api/connections
 curl -X DELETE http://localhost:4001/api/connections/<connection-id>
 ```
 
-Live mode uses `tiktok-live-connector` 2.4.0 with exponential-backoff reconnects (1s → 30s). Simulation mode emits weighted events every ~650ms from a realistic mock dataset — **22 Indonesian-style usernames, 30+ chat lines, and a real-value TikTok gift catalog** (Rose ×1 … TikTok Universe 44,999 coins, cheap gifts come in streaks like Rose ×24) — perfect for designing without a live stream.
+Live mode uses `tiktok-live-connector` 2.4.0 with exponential-backoff reconnects (1s → 30s). Simulation mode emits weighted events every ~650ms from a realistic mock dataset — **40 Indonesian-style usernames, 59 chat lines, and a 15-gift real-value TikTok catalog** (Rose ×1 … TikTok Universe 44,999 coins, cheap gifts come in streaks like Rose ×24) — perfect for designing without a live stream.
 
 ## Demo feed (mock events without the connector)
 
@@ -126,7 +126,7 @@ node apps/platform/scripts/demo-feed.mjs <publicToken> --fast               # in
 node apps/platform/scripts/demo-feed.mjs <publicToken> --url http://localhost:3000
 ```
 
-`<publicToken>` is the last segment of the overlay URL (or from **Copy URL Overlay** in the editor). The script prints each event as it sends and reports totals — 37 events, 76,501 coins (all five event types: gift, chat, follow, like, share).
+`<publicToken>` is the last segment of the overlay URL (or from **Copy URL Overlay** in the editor). The script prints each event as it sends and reports totals — 52 events, 82,351 coins (all five event types: gift, chat, follow, like, share).
 
 ## Games (gift-driven mini game in the overlay)
 

@@ -36,6 +36,8 @@ const SCRIPT = [
   chat("nadia_plays", "baru join, mau nanya"),
   chat("nadia_plays", "itu map apa bang?"),
   chat("bang_jago", "mainnya jago"),
+  chat("dedi.keren", "mantap jiwa"),
+  chat("rina_ayu", "overlay-nya keren banget"),
 
   // Gelombang follow + like
   follow("nadia_plays"),
@@ -44,30 +46,43 @@ const SCRIPT = [
   like("mel_central"),
   like("kucing_oreo"),
   like("nadia_plays"),
+  follow("dedi.keren"),
+  like("rina_ayu"),
 
-  // Gift kecil bertubi (Rose streak)
+  // Gift kecil bertubi (streak murah)
   gift("rani.gift", "Rose", 1, 5),
   gift("rani.gift", "Rose", 1, 24),
   gift("fikri.ogg", "Finger Heart", 5, 3),
+  gift("wahyu.gg", "Ice Cream Cone", 1, 30),
   chat("vira.tiktok", "hujan gift bang"),
+  gift("sinta.live", "Paper Plane", 5, 4),
 
   // Gift menengah
   gift("dimas_afk", "Doughnut", 30, 2),
   gift("putri_ireng", "Hand Hearts", 100, 1),
+  gift("eko_mirza", "Wristband", 50, 2),
   chat("zara_says", "support terus bang"),
   gift("hendra.gg", "Corgi", 299, 1),
+  gift("farhan.pk", "Perfume", 200, 1),
+  gift("gita.tiktok", "Swan", 500, 1),
 
   // Reaksi chat
   chat("joko.stream", "serii abis"),
   chat("mama_dewi", "semangat streamnya"),
+  chat("tono.stream", "combo nya gila"),
 
-  // MOMEN BESAR 1: Galaxy (+ share penonton)
+  // MOMEN BESAR 1: Dinosaur (kelas menengah naik daun)
+  gift("indah_sari", "Dinosaur", 5000, 1),
+  chat("jarwo.tv", "wah dinosaurus"),
+  share("indah_sari"),
+
+  // MOMEN BESAR 2: Galaxy (+ share penonton)
   gift("bunda_sari", "Galaxy", 1000, 1),
   chat("reno_p", "wah galaxy nih"),
   chat("bayu.op", "ampun daun"),
   share("reno_p"),
 
-  // MOMEN BESAR 2: Lion & Universe (klimaks)
+  // MOMEN BESAR 3: Lion & Universe (klimaks)
   gift("sultan.live", "Lion", 29999, 1),
   chat("caca_chaca", "SULTAN MAMPIR"),
   gift("sultan.live", "TikTok Universe", 44999, 1),
@@ -80,6 +95,8 @@ const SCRIPT = [
   follow("hendra.gg"),
   like("kimo_22"),
   chat("kimo_22", "GG"),
+  follow("puput.w"),
+  like("rizal.tj"),
   chat("bunda_sari", "sukses ya streamnya"),
 ];
 
